@@ -65,11 +65,11 @@ class _MyHomePageState extends State<MyHomePage> {
             label: 'Bank',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.business),
+            icon: Icon(Icons.extension),
             label: 'Game',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.extension),
+            icon: Icon(Icons.add_box),
             label: 'Add Word',
           ),
           BottomNavigationBarItem(
