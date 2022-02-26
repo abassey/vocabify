@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'vault-view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Vocabify'),
+      home: const VaultView(vaultTitle: "Vault Title")
     );
   }
 }
