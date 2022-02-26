@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const VaultView(vaultTitle: "Vault Title")
+      home: const MyHomePage(title: "test")
     );
   }
 }
