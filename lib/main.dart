@@ -89,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.all(10.0),
         child: GestureDetector(
           onTap: () {
-            print("new vault to access tapped");
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const VaultView(vaultTitle: "Vault View")));
           },
           child: Container(
             margin: const EdgeInsets.all(8.0),
@@ -119,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.all(10.0),
           child: GestureDetector(
             onTap: () {
-              print("core vault tapped -> this goes to core vault page");
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const VaultView(vaultTitle: "Core Vault View")));
             },
             child: const SizedBox(
               width: 500,
