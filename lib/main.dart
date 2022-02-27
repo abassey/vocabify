@@ -52,40 +52,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-List<Widget> gridChild = [
-  Stack(
-    children: [
-      Positioned.fill(
-        child: Container(
-          margin: const EdgeInsets.all(10.0),
-          width: 30.0,
-          height: 50.0,
-          color: Colors.black54,
-        ),
-      ),
-      Positioned.fill(
-        child: GestureDetector(
-          onTap: () {
-            print("add vault tapped");
-            //addToGrid();
-          },
-          child: const Icon(
-            Icons.add_box,
-            size: 100,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    ],
-  ),
-  Container(
-    margin: const EdgeInsets.all(10.0),
-    width: 30.0,
-    height: 50.0,
-    color: Colors.yellow,
-  ),
-];
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -94,15 +60,53 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<Widget> gridChild = [
+    Stack(
+      children: [
+        Positioned.fill(
+          child: Container(
+            margin: const EdgeInsets.all(10.0),
+            width: 30.0,
+            height: 50.0,
+            color: Colors.black54,
+          ),
+        ),
+        const Positioned.fill(
+          child: Icon(
+            Icons.add_box,
+            size: 100,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    ),
+  ];
+
   void addToGrid() {
     setState(() {
-      gridChild.add(Container(
-        margin: const EdgeInsets.all(8.0),
-        width: 30.0,
-        height: 50.0,
-        color: Colors.purple,
+      gridChild.add(Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: GestureDetector(
+          onTap: () {
+            print("new vault to access tapped");
+          },
+          child: Container(
+            margin: const EdgeInsets.all(8.0),
+            width: 30.0,
+            height: 50.0,
+            color: Colors.purple,
+          ),
+        ),
       ));
     });
+  }
+
+  void tapped(int index) {
+    if (index == 0) {
+      addToGrid();
+    } else {
+      print("other vault to be accessed");
+    }
   }
 
   @override
@@ -126,10 +130,17 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         Expanded(
-          child: GridView.count(
-            crossAxisCount: 2,
-            children:
-                List.generate(gridChild.length, (index) => gridChild[index]),
+          child: GridView.builder(
+            itemCount: gridChild.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 20,
+              crossAxisSpacing: 10,
+            ),
+            itemBuilder: (context, index) => GestureDetector(
+              onTap: () => tapped(index),
+              child: gridChild[index],
+            ),
           ),
         )
       ],
