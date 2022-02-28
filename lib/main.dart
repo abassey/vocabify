@@ -1,12 +1,29 @@
 import 'package:flutter/material.dart';
 import 'vault-view.dart';
+import 'friend-account.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  const MyApp({ Key? key }) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  int currentIndex = 0;
+
+  final screens = [
+    //screen objects placed here
+    const HomeScreen(),
+    const Text('page_2 - GAME', style: TextStyle(fontSize: 30)),
+    const Text('page_3 - ADD WORD', style: TextStyle(fontSize: 30)),
+    const Page1(),
+    const Text('page_5 - ACCOUNT', style: TextStyle(fontSize: 30)),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +37,16 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: const Text("Vocabify"),
         ),
+        body: IndexedStack(
+          index: currentIndex,
+          children: screens,
+        ),
         bottomNavigationBar: BottomNavigationBar(
+          currentIndex: currentIndex,
+          onTap: (index) => setState(() => currentIndex = index),
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.blue,
+          selectedItemColor: Colors.white,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.lock),
@@ -45,13 +69,12 @@ class MyApp extends StatelessWidget {
               label: 'Account',
             ),
           ],
-          selectedItemColor: Colors.white,
         ),
-        body: const HomeScreen(),
       ),
     );
   }
 }
+  
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -146,5 +169,24 @@ class _HomeScreenState extends State<HomeScreen> {
         )
       ],
     ));
+  }
+}
+
+//This can be deleted when tess adds her friend list, its just to show the functionality of account page for now
+class Page1 extends StatelessWidget {
+  const Page1({ Key? key }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator
+          .push(
+            context,
+            MaterialPageRoute(builder: (context) => const FriendsAccount(name: 'Brayden', wordsLearned: 200))
+          );
+      },
+      child: const Text('friend-account')
+    );
   }
 }
