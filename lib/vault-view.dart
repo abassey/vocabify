@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'word-view.dart';
 enum WordTypes {
   noun,
   adj
@@ -9,17 +9,23 @@ List _vaultItems = [
   {
     "word": "some word",
     "pronounce": "This is some part",
-    "word_type": "Noun" 
+    "word_type": "Noun",
+    "word_desc": "This is some word that is pretty cool! You can read some info about the word and learn something new.",
+    "word_syns": ["Pepsi", "Coke", "Ice Cream", "Mario"]
   },
   {
     "word": "some word",
     "pronounce": "This is some part",
-    "word_type": "Noun" 
+    "word_type": "Noun",
+    "word_desc": "This is some word that is pretty cool! You can read some info about the word and learn something new.",
+    "word_syns": ["Pepsi", "Coke", "Ice Cream", "Mario"]
   },
   {
     "word": "some word",
     "pronounce": "This is some part",
-    "word_type": "Noun" 
+    "word_type": "Noun",
+    "word_desc": "This is some word that is pretty cool! You can read some info about the word and learn something new.",
+    "word_syns": ["Pepsi", "Coke", "Ice Cream", "Mario"]
   },
 ];
 
@@ -35,11 +41,14 @@ class _VaultViewState extends State<VaultView> {
   bool _isEditMode = false;
   double iconSize = 20;
 
-  Widget _buildRow(input) {
+  Widget _buildRow(index) { 
     return ListTile(
       title: Text(
-        input["word"] + " / (" + input["pronounce"] + ") / " + input["word_type"],
+        _vaultItems[index]["word"] + " / (" + _vaultItems[index]["pronounce"] + ") / " + _vaultItems[index]["word_type"],
       ),
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => WordView()));
+      },
     );
   }
 
@@ -75,7 +84,7 @@ class _VaultViewState extends State<VaultView> {
           );
         }
 
-      return _buildRow(_vaultItems[index]);
+      return _buildRow(index);
       },
       ),
     );
