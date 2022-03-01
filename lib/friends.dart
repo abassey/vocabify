@@ -22,10 +22,30 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
           crossAxisAlignment: CrossAxisAlignment.start, 
           children: [
             _isEditMode ? const TextBoxSearch() : Text("Friends List", textAlign: TextAlign.start),
+            Row(
+              children: [ 
+                Icon(Icons.person_add_alt_1_rounded , size: iconSize),
+              ]
+            ),
           ], 
-          mainAxisSize: MainAxisSize.min
+          mainAxisSize: MainAxisSize.min,
         ),
         centerTitle: false,
+        actions: [
+        Padding(
+          padding: const EdgeInsets.all(10), 
+          child: IconButton(onPressed: () => {
+            setState(() {
+              _isEditMode = !_isEditMode;
+              if (_isEditMode) {
+                iconSize = 15;
+              } else {
+                iconSize = 20;
+              }
+            }),
+          }, icon: !_isEditMode ? const Icon(Icons.search) : const Icon(Icons.close)) 
+        )
+        ],
       ),
       body: friendsListView(),
     );
@@ -52,9 +72,16 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
 
   Widget _buildRow(friend) {
     return ListTile(
-      title: Text(
-        friend["name"] + friend["gamesWon"] + "games won",
+      leading: Text(
+        friend["name"], 
+        textScaleFactor: 1.6,
+        style: TextStyle(fontWeight: FontWeight.bold) 
       ),
+      title: Text(
+        friend["gamesWon"] + " games won",
+        textScaleFactor: 1.3,
+        textAlign: TextAlign.right,
+      )
     );
   }
 }
