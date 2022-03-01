@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'vault-view.dart';
 import 'friend-account.dart';
+import 'friends.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,7 +22,7 @@ class _MyAppState extends State<MyApp> {
     const HomeScreen(),
     const Text('page_2 - GAME', style: TextStyle(fontSize: 30)),
     const Text('page_3 - ADD WORD', style: TextStyle(fontSize: 30)),
-    const Page1(),
+    const FriendsListScreen(),
     const Text('page_5 - ACCOUNT', style: TextStyle(fontSize: 30)),
   ];
 
@@ -169,24 +170,5 @@ class _HomeScreenState extends State<HomeScreen> {
         )
       ],
     ));
-  }
-}
-
-//This can be deleted when tess adds her friend list, its just to show the functionality of account page for now
-class Page1 extends StatelessWidget {
-  const Page1({ Key? key }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        Navigator
-          .push(
-            context,
-            MaterialPageRoute(builder: (context) => const FriendsAccount(name: 'Brayden', wordsLearned: 200))
-          );
-      },
-      child: const Text('friend-account')
-    );
   }
 }
