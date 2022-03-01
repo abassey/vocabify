@@ -1,11 +1,29 @@
 import 'package:flutter/material.dart';
+import 'vault-view.dart';
+import 'friend-account.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  const MyApp({ Key? key }) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  int currentIndex = 0;
+
+  final screens = [
+    //screen objects placed here
+    const HomeScreen(),
+    const Text('page_2 - GAME', style: TextStyle(fontSize: 30)),
+    const Text('page_3 - ADD WORD', style: TextStyle(fontSize: 30)),
+    const Page1(),
+    const Text('page_5 - ACCOUNT', style: TextStyle(fontSize: 30)),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +37,16 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: const Text("Vocabify"),
         ),
+        body: IndexedStack(
+          index: currentIndex,
+          children: screens,
+        ),
         bottomNavigationBar: BottomNavigationBar(
+          currentIndex: currentIndex,
+          onTap: (index) => setState(() => currentIndex = index),
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.blue,
+          selectedItemColor: Colors.white,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.lock),
@@ -44,47 +69,12 @@ class MyApp extends StatelessWidget {
               label: 'Account',
             ),
           ],
-          selectedItemColor: Colors.white,
         ),
-        body: const HomeScreen(),
       ),
     );
   }
 }
-
-List<Widget> gridChild = [
-  Stack(
-    children: [
-      Positioned.fill(
-        child: Container(
-          margin: const EdgeInsets.all(10.0),
-          width: 30.0,
-          height: 50.0,
-          color: Colors.black54,
-        ),
-      ),
-      Positioned.fill(
-        child: GestureDetector(
-          onTap: () {
-            print("add vault tapped");
-            //addToGrid();
-          },
-          child: const Icon(
-            Icons.add_box,
-            size: 100,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    ],
-  ),
-  Container(
-    margin: const EdgeInsets.all(10.0),
-    width: 30.0,
-    height: 50.0,
-    color: Colors.yellow,
-  ),
-];
+  
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -94,15 +84,53 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<Widget> gridChild = [
+    Stack(
+      children: [
+        Positioned.fill(
+          child: Container(
+            margin: const EdgeInsets.all(10.0),
+            width: 30.0,
+            height: 50.0,
+            color: Colors.black54,
+          ),
+        ),
+        const Positioned.fill(
+          child: Icon(
+            Icons.add_box,
+            size: 100,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    ),
+  ];
+
   void addToGrid() {
     setState(() {
-      gridChild.add(Container(
-        margin: const EdgeInsets.all(8.0),
-        width: 30.0,
-        height: 50.0,
-        color: Colors.purple,
+      gridChild.add(Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const VaultView(vaultTitle: "Vault View")));
+          },
+          child: Container(
+            margin: const EdgeInsets.all(8.0),
+            width: 30.0,
+            height: 50.0,
+            color: Colors.purple,
+          ),
+        ),
       ));
     });
+  }
+
+  void tapped(int index) {
+    if (index == 0) {
+      addToGrid();
+    } else {
+      print("other vault to be accessed");
+    }
   }
 
   @override
@@ -114,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.all(10.0),
           child: GestureDetector(
             onTap: () {
-              print("core vault tapped -> this goes to core vault page");
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const VaultView(vaultTitle: "Core Vault View")));
             },
             child: const SizedBox(
               width: 500,
@@ -126,13 +154,39 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         Expanded(
-          child: GridView.count(
-            crossAxisCount: 2,
-            children:
-                List.generate(gridChild.length, (index) => gridChild[index]),
+          child: GridView.builder(
+            itemCount: gridChild.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 20,
+              crossAxisSpacing: 10,
+            ),
+            itemBuilder: (context, index) => GestureDetector(
+              onTap: () => tapped(index),
+              child: gridChild[index],
+            ),
           ),
         )
       ],
     ));
+  }
+}
+
+//This can be deleted when tess adds her friend list, its just to show the functionality of account page for now
+class Page1 extends StatelessWidget {
+  const Page1({ Key? key }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator
+          .push(
+            context,
+            MaterialPageRoute(builder: (context) => const FriendsAccount(name: 'Brayden', wordsLearned: 200))
+          );
+      },
+      child: const Text('friend-account')
+    );
   }
 }
