@@ -16,38 +16,42 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.start, 
-          crossAxisAlignment: CrossAxisAlignment.start, 
-          children: [
-            _isEditMode ? const TextBoxSearch() : Text("Friends List", textAlign: TextAlign.start),
-            Row(
-              children: [ 
-                Icon(Icons.person_add_alt_1_rounded , size: iconSize),
-              ]
-            ),
-          ], 
-          mainAxisSize: MainAxisSize.min,
-        ),
-        centerTitle: false,
-        actions: [
-        Padding(
-          padding: const EdgeInsets.all(10), 
-          child: IconButton(onPressed: () => {
-            setState(() {
-              _isEditMode = !_isEditMode;
-              if (_isEditMode) {
-                iconSize = 15;
-              } else {
-                iconSize = 20;
-              }
-            }),
-          }, icon: !_isEditMode ? const Icon(Icons.search) : const Icon(Icons.close)) 
-        )
-        ],
-      ),
+      appBar: friendsBar(),
       body: friendsListView(),
+    );
+  }
+
+  AppBar friendsBar() {
+    return AppBar(
+      title: Column(
+        mainAxisAlignment: MainAxisAlignment.start, 
+        crossAxisAlignment: CrossAxisAlignment.start, 
+        children: [
+          _isEditMode ? const TextBoxSearch() : Text("Friends List", textAlign: TextAlign.start),
+          Row(
+            children: [ 
+              Icon(Icons.person_add_alt_1_rounded , size: iconSize),
+            ]
+          ),
+        ], 
+        mainAxisSize: MainAxisSize.min,
+      ),
+      centerTitle: false,
+      actions: [
+      Padding(
+        padding: const EdgeInsets.all(10), 
+        child: IconButton(onPressed: () => {
+          setState(() {
+            _isEditMode = !_isEditMode;
+            if (_isEditMode) {
+              iconSize = 15;
+            } else {
+              iconSize = 20;
+            }
+          }),
+        }, icon: !_isEditMode ? const Icon(Icons.search) : const Icon(Icons.close)) 
+      )
+      ],
     );
   }
 
