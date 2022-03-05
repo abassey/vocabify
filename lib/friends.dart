@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'friendsdata.dart';
+import 'friend-account.dart';
+import 'dart:math';
 
 class FriendsListScreen extends StatefulWidget {
   const FriendsListScreen({Key? key}) : super(key: key);
@@ -24,33 +26,37 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
   AppBar friendsBar() {
     return AppBar(
       title: Column(
-        mainAxisAlignment: MainAxisAlignment.start, 
-        crossAxisAlignment: CrossAxisAlignment.start, 
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _isEditMode ? const TextBoxSearch() : const Text("Friends", textAlign: TextAlign.start),
-        ], 
+          _isEditMode
+              ? const TextBoxSearch()
+              : const Text("Friends", textAlign: TextAlign.start),
+        ],
         mainAxisSize: MainAxisSize.min,
       ),
       centerTitle: false,
       actions: [
         Padding(
-          padding: const EdgeInsets.all(10), 
-          child: IconButton(onPressed: () => {
-            setState(() {
-              _isEditMode = !_isEditMode;
-              if (_isEditMode) {
-                iconSize = 15;
-              } else {
-                iconSize = 20;
-              }
-            }),
-          }, icon: !_isEditMode ? const Icon(Icons.search) : const Icon(Icons.close)) 
-        ),
+            padding: const EdgeInsets.all(10),
+            child: IconButton(
+                onPressed: () => {
+                      setState(() {
+                        _isEditMode = !_isEditMode;
+                        if (_isEditMode) {
+                          iconSize = 15;
+                        } else {
+                          iconSize = 20;
+                        }
+                      }),
+                    },
+                icon: !_isEditMode
+                    ? const Icon(Icons.search)
+                    : const Icon(Icons.close))),
         //temporarily a popup button until add friend functionality is added
         PopupMenuButton(
-          icon: Icon(Icons.person_add_alt_1_rounded),
-          itemBuilder: (context) => const []
-        ),
+            icon: const Icon(Icons.person_add_alt_1_rounded),
+            itemBuilder: (context) => const []),
       ],
     );
   }
@@ -75,23 +81,33 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
   }
 
   Widget _buildRow(friend) {
+    Random random = Random();
+    int randomNumber = random.nextInt(500);
+
     return ListTile(
-      leading: Text(
-        friend["name"], 
-        textScaleFactor: 1.6,
-        style: TextStyle(fontWeight: FontWeight.bold) 
-      ),
+      leading: Text(friend["name"],
+          textScaleFactor: 1.6,
+          style: const TextStyle(fontWeight: FontWeight.bold)),
       title: Text(
         friend["gamesWon"] + " games won",
         textScaleFactor: 1.3,
         textAlign: TextAlign.right,
-      )
+      ),
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => FriendsAccount(
+                      name: friend["name"],
+                      wordsLearned: randomNumber,
+                    )));
+      },
     );
   }
 }
 
 class TextBoxSearch extends StatelessWidget {
-  const TextBoxSearch({ Key? key }) : super(key: key);
+  const TextBoxSearch({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -102,8 +118,10 @@ class TextBoxSearch extends StatelessWidget {
       color: Colors.white,
       height: 30,
       child: const TextField(
-        decoration:
-            InputDecoration(border: InputBorder.none, hintText: 'Search', hintStyle: TextStyle(fontSize: 15)),
+        decoration: InputDecoration(
+            border: InputBorder.none,
+            hintText: 'Search',
+            hintStyle: TextStyle(fontSize: 15)),
       ),
     );
   }
