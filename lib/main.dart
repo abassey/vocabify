@@ -8,7 +8,7 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({ Key? key }) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -75,7 +75,6 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-  
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -113,7 +112,11 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.all(10.0),
         child: GestureDetector(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const VaultView(vaultTitle: "Vault View")));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        const VaultView(vaultTitle: "Vault View")));
           },
           child: Container(
             margin: const EdgeInsets.all(8.0),
@@ -143,14 +146,24 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.all(10.0),
           child: GestureDetector(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const VaultView(vaultTitle: "Core Vault View")));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const VaultView(vaultTitle: "All Words")));
             },
-            child: const SizedBox(
+            child: Container(
               width: 500,
               height: 150,
-              child: DecoratedBox(
-                decoration: BoxDecoration(color: Colors.pink),
-              ),
+              decoration: const BoxDecoration(color: Colors.pink),
+              child: const Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "ALL WORDS",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, height: 1.5, fontSize: 40),
+                  )),
             ),
           ),
         ),
@@ -172,3 +185,24 @@ class _HomeScreenState extends State<HomeScreen> {
     ));
   }
 }
+<<<<<<< HEAD
+=======
+
+//This can be deleted when tess adds her friend list, its just to show the functionality of account page for now
+class Page1 extends StatelessWidget {
+  const Page1({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const FriendsAccount(
+                      name: 'Brayden', wordsLearned: 200)));
+        },
+        child: const Text('friend-account'));
+  }
+}
+>>>>>>> ca1ac5009a9462e2cbb5acace00007a1792e0214
