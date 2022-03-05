@@ -131,8 +131,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void tapped(int index) {
     if (index == 0) {
       addToGrid();
-    } else {
-      print("other vault to be accessed");
     }
   }
 
@@ -167,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           height: 1.5,
-                          fontSize: 40),
+                          fontSize: 30),
                     )),
               ),
             ),

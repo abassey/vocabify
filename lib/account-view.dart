@@ -8,6 +8,14 @@ class AccountView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Account View"),
+        actions: [
+          Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: InkWell(
+                onTap: () {},
+                child: const Icon(Icons.settings),
+              )),
+        ],
       ),
       body: Center(
           child: Column(
