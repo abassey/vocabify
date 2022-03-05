@@ -27,30 +27,30 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
         mainAxisAlignment: MainAxisAlignment.start, 
         crossAxisAlignment: CrossAxisAlignment.start, 
         children: [
-          _isEditMode ? const TextBoxSearch() : Text("Friends List", textAlign: TextAlign.start),
-          Row(
-            children: [ 
-              Icon(Icons.person_add_alt_1_rounded , size: iconSize),
-            ]
-          ),
+          _isEditMode ? const TextBoxSearch() : const Text("Friends", textAlign: TextAlign.start),
         ], 
         mainAxisSize: MainAxisSize.min,
       ),
       centerTitle: false,
       actions: [
-      Padding(
-        padding: const EdgeInsets.all(10), 
-        child: IconButton(onPressed: () => {
-          setState(() {
-            _isEditMode = !_isEditMode;
-            if (_isEditMode) {
-              iconSize = 15;
-            } else {
-              iconSize = 20;
-            }
-          }),
-        }, icon: !_isEditMode ? const Icon(Icons.search) : const Icon(Icons.close)) 
-      )
+        Padding(
+          padding: const EdgeInsets.all(10), 
+          child: IconButton(onPressed: () => {
+            setState(() {
+              _isEditMode = !_isEditMode;
+              if (_isEditMode) {
+                iconSize = 15;
+              } else {
+                iconSize = 20;
+              }
+            }),
+          }, icon: !_isEditMode ? const Icon(Icons.search) : const Icon(Icons.close)) 
+        ),
+        //temporarily a popup button until add friend functionality is added
+        PopupMenuButton(
+          icon: Icon(Icons.person_add_alt_1_rounded),
+          itemBuilder: (context) => const []
+        ),
       ],
     );
   }

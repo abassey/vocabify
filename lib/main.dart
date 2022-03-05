@@ -185,24 +185,3 @@ class _HomeScreenState extends State<HomeScreen> {
     ));
   }
 }
-<<<<<<< HEAD
-=======
-
-//This can be deleted when tess adds her friend list, its just to show the functionality of account page for now
-class Page1 extends StatelessWidget {
-  const Page1({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const FriendsAccount(
-                      name: 'Brayden', wordsLearned: 200)));
-        },
-        child: const Text('friend-account'));
-  }
-}
->>>>>>> ca1ac5009a9462e2cbb5acace00007a1792e0214
