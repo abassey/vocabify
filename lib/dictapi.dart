@@ -26,12 +26,20 @@ class DictAPI {
   late List<dynamic> phonetics;
   late List<dynamic> meanings;
 
+  /*
+  * Factory function for turning the retrieved json into a
+  * DictAPI object
+   */
   factory DictAPI.fromJson(Map<String, dynamic> json) => DictAPI(
     word: json["word"],
     phonetics: json["phonetics"],
     meanings: json["meanings"],
   );
 
+  /*
+  * Retrieves the actual DictItem from the current
+  * instance of DictAPI
+   */
   getDictItem(){
     List<Phonetics> phoneticslist = [];
     List<Definitions> definitionslist = [];

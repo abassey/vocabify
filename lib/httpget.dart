@@ -14,9 +14,15 @@ class HttpGet {
   List<dynamic> dictapi = [];
   late DictAPI dictItem;
 
-
+  /*
+  * This returns the json acquired from the dictionary
+  * query
+   */
   Future<List<dynamic>?> getDictJson() async {
     var client = http.Client();
+    // word will always be searched in english
+    // to change this, create a variable for en in the link
+    // and auto set this to en
     var uri = Uri.parse("https://api.dictionaryapi.dev/api/v2/entries/en/" + word);
     var response = await client.get(uri);
     if(response.statusCode == 200){ // Response was a success
@@ -24,9 +30,12 @@ class HttpGet {
       return json;
     }
   }
-
+  /*
+  * Returns a dictionary api item
+   */
   Future<DictAPI> loadDictItem() async{
-    dictapi = (await getDictJson())!;
+    dictapi = (await getDictJson())!; // Retrieve dictionary json
+    // Retrieve dictionary api item
     dictItem = DictAPI(word: dictapi[0]["word"], meanings: dictapi[0]["meanings"], phonetics: dictapi[0]["phonetics"]);
     return dictItem;
   }
