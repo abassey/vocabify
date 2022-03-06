@@ -33,22 +33,19 @@ class _AccountViewState extends State<AccountView> {
   Widget buildBottom() {
     return Column(
       children: [
-        Text(widget.name,
-            style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
-        Text('Words Learned: ${widget.wordsLearned}',
-            style: const TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: Colors.green)),
-        const Divider(thickness: 2),
-        const Align(
-            //This is just for the shared vault title
-            alignment: Alignment.bottomLeft,
-            child: Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Text('Bio',
-                    style:
-                        TextStyle(fontSize: 30, fontWeight: FontWeight.bold)))),
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Text(widget.name,
+              style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(3.0),
+          child: Text('Words Learned: ${widget.wordsLearned}',
+              style: const TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green)),
+        ),
       ],
     );
   }
