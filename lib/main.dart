@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'vault-view.dart';
-import 'friend-account.dart';
 import 'friends.dart';
 import 'account-view.dart';
 
