@@ -63,10 +63,10 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
 
   ListView friendsListView() {
     return ListView.builder(
-      itemCount: friendsList.length + 1,
+      itemCount: friendsList.length + (friendsList.length - 1 < 0 ? 0 :friendsList.length - 1),
       itemBuilder: (context, i) {
         var index = (i ~/ 2);
-        if (i.isOdd || index >= friendsList.length) {
+        if (i.isOdd) {
           return const Padding(
             padding: EdgeInsets.symmetric(horizontal: 7.0),
             child: Divider(

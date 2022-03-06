@@ -110,13 +110,13 @@ class _VaultViewState extends State<VaultView> {
         ],
       ),
       body: ListView.builder(
-        itemCount: _vaultItems.length + 1,
+        itemCount: _vaultItems.length + (_vaultItems.length - 1 < 0 ? 0 : _vaultItems.length - 1),
         itemBuilder: (context, i) {
           var index = (i ~/ 2);
           if (i.isOdd || index >= _vaultItems.length) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7.0),
-              child: const Divider(
+            return const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 7.0),
+              child: Divider(
                 color: Colors.black,
                 thickness: 0.5,
               ),
