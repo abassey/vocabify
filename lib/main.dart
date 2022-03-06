@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vocabify/game-view.dart';
 import 'vault-view.dart';
 import 'friends.dart';
 import 'account-view.dart';
@@ -20,7 +21,7 @@ class _MyAppState extends State<MyApp> {
   final screens = [
     //screen objects placed here
     const HomeScreen(),
-    const Center(child: Text('page_2 - GAME', style: TextStyle(fontSize: 30))),
+    const GameView(),
     const Center(
         child: Text('page_3 - ADD WORD', style: TextStyle(fontSize: 30))),
     const FriendsListScreen(),
