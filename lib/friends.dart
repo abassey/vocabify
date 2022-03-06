@@ -68,7 +68,7 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
         var index = (i ~/ 2);
         if (i.isOdd || index >= friendsList.length) {
           return const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4.0),
+            padding: EdgeInsets.symmetric(horizontal: 7.0),
             child: Divider(
               color: Colors.black87,
               thickness: 0.5,

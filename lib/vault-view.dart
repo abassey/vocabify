@@ -114,9 +114,12 @@ class _VaultViewState extends State<VaultView> {
         itemBuilder: (context, i) {
           var index = (i ~/ 2);
           if (i.isOdd || index >= _vaultItems.length) {
-            return const Divider(
-              color: Colors.black,
-              thickness: 0.5,
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 7.0),
+              child: const Divider(
+                color: Colors.black,
+                thickness: 0.5,
+              ),
             );
           }
 
