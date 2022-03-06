@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vocabify/game-view.dart';
 import 'vault-view.dart';
 import 'friends.dart';
 import 'account-view.dart';
@@ -17,10 +18,10 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int currentIndex = 0;
 
-  final screens = [
+  List<Widget> screens = <Widget>[
     //screen objects placed here
     const HomeScreen(),
-    const Center(child: Text('page_2 - GAME', style: TextStyle(fontSize: 30))),
+    const GameView(),
     const FriendsListScreen(),
     const AccountView(name: "My Name", wordsLearned: 32),
   ];
