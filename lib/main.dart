@@ -22,8 +22,6 @@ class _MyAppState extends State<MyApp> {
     //screen objects placed here
     const HomeScreen(),
     const GameView(),
-    const Center(
-        child: Text('page_3 - ADD WORD', style: TextStyle(fontSize: 30))),
     const FriendsListScreen(),
     const AccountView(name: "My Name", wordsLearned: 32),
   ];
@@ -57,10 +55,6 @@ class _MyAppState extends State<MyApp> {
               label: 'Game',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.add_box),
-              label: 'Add Word',
-            ),
-            BottomNavigationBarItem(
               icon: Icon(Icons.group),
               label: 'Friends',
             ),
@@ -83,6 +77,43 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late TextEditingController controller;
+
+   //TextEditing Controller fucntions
+  @override
+  void initState(){
+    super.initState();
+    controller = TextEditingController();
+  }
+
+  @override
+  void dispose(){
+    controller.dispose();
+    super.dispose();
+  }
+
+  Future<String?> openDialog() => showDialog<String>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Vault Name'),
+      content: TextField(
+        controller: controller,
+        autofocus: true,
+        decoration: const InputDecoration(hintText: 'Enter vault name'),
+      ),
+      actions: [
+        TextButton(
+          child: const Text('ADD'),
+          onPressed: () {
+            Navigator.of(context).pop(controller.text);
+            controller.clear();
+          },
+        )
+      ]
+    ),
+  );
+
+  //grid functions
   List<Widget> gridChild = [
     Stack(
       children: [
@@ -91,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
             margin: const EdgeInsets.all(10.0),
             width: 30.0,
             height: 50.0,
-            color: Colors.black54,
+            decoration: const BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.all(Radius.circular(20))),
           ),
         ),
         const Positioned.fill(
@@ -105,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   ];
 
-  void addToGrid() {
+  void addToGrid(String vaultName) {
     setState(() {
       gridChild.add(Padding(
         padding: const EdgeInsets.all(10.0),
@@ -118,21 +149,24 @@ class _HomeScreenState extends State<HomeScreen> {
                         const VaultView(vaultTitle: "Vault View")));
           },
           child: Container(
-            margin: const EdgeInsets.all(8.0),
             width: 30.0,
             height: 50.0,
-            color: Colors.purple,
+            decoration: const BoxDecoration(color: Color.fromARGB(255, 20, 74, 118), borderRadius: BorderRadius.all(Radius.circular(20))),
+            child: Center(child: Text(vaultName, style: const TextStyle(fontSize: 25, color: Colors.white))),
           ),
         ),
       ));
     });
   }
 
-  void tapped(int index) {
+  void tapped(int index) async {
     if (index == 0) {
-      addToGrid();
+      final vaultName = await openDialog();
+      if (vaultName == null || vaultName.isEmpty) return;
+      addToGrid(vaultName);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Container(
                 width: 500,
                 height: 150,
-                decoration: const BoxDecoration(color: Colors.pink),
+                decoration: const BoxDecoration(color:Colors.teal, borderRadius: BorderRadius.all(Radius.circular(20))),
                 child: const Align(
                     alignment: Alignment.center,
                     child: Text(
@@ -164,6 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
+                          color: Colors.white,
                           height: 1.5,
                           fontSize: 30),
                     )),

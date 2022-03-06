@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class WordView extends StatelessWidget {
-  WordView({Key? key}) : super(key: key);
+  WordView({Key? key, required this.word}) : super(key: key);
   final List<String> syns = ["Pepsi", "Coke", "Another Word"];
+  final String word;
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +51,8 @@ class WordView extends StatelessWidget {
                           children: [
                             const Padding(
                                 padding: EdgeInsets.fromLTRB(20, 80, 0, 0)),
-                            const Text("Some Word",
-                                style: TextStyle(
+                            Text(word,
+                                style: const TextStyle(
                                     fontSize: 30,
                                     //fontStyle: FontStyle.italic,
                                     fontWeight: FontWeight.w700)),

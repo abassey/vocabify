@@ -39,6 +39,7 @@ class VaultView extends StatefulWidget {
 }
 
 class _VaultViewState extends State<VaultView> {
+  late TextEditingController controller;
   bool _isEditMode = false;
   double iconSize = 20;
 
@@ -53,14 +54,43 @@ class _VaultViewState extends State<VaultView> {
       ),
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => WordView()));
+            context, MaterialPageRoute(builder: (context) => WordView(word: _vaultItems[index]["word"])));
       },
     );
+  }
+
+  //TextEditing Controller fucntions
+  @override
+  void initState(){
+    super.initState();
+    controller = TextEditingController();
+  }
+
+  @override
+  void dispose(){
+    controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () async {
+          final word = await openDialog();
+          if (word == null || word.isEmpty) return;
+          setState(() {
+            _vaultItems.add({
+              "word": word,
+              "pronounce": "This is some part",
+              "word_type": "Noun",
+              "word_desc": "This is some word that is pretty cool! You can read some info about the word and learn something new.",
+              "word_syns": ["Pepsi", "Coke", "Ice Cream", "Mario"]
+            });
+          });
+        },
+      ),
       appBar: AppBar(
         title: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -128,6 +158,29 @@ class _VaultViewState extends State<VaultView> {
       ),
     );
   }
+
+  Future<String?> openDialog() => showDialog<String>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Add Word'),
+      content: TextField(
+        controller: controller,
+        autofocus: true,
+        decoration: const InputDecoration(hintText: 'Enter your word'),
+      ),
+      actions: [
+        TextButton(
+          child: const Text('ADD'),
+          onPressed: () {
+            Navigator.of(context).pop(controller.text);
+            controller.clear();
+          },
+        )
+      ]
+    ),
+  );
+
+
 }
 
 class TextBoxSearch extends StatelessWidget {
