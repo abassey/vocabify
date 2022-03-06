@@ -25,7 +25,7 @@ class _MyAppState extends State<MyApp> {
     const Center(
         child: Text('page_3 - ADD WORD', style: TextStyle(fontSize: 30))),
     const FriendsListScreen(),
-    const AccountView(),
+    const AccountView(name: "My Name", wordsLearned: 32),
   ];
 
   @override
