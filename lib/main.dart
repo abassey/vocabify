@@ -18,7 +18,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int currentIndex = 0;
 
-  final screens = [
+  List<Widget> screens = <Widget>[
     //screen objects placed here
     const HomeScreen(),
     const GameView(),
