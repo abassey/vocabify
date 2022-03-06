@@ -77,10 +77,6 @@ class _VaultViewState extends State<VaultView> {
               padding: const EdgeInsets.all(10),
               child: IconButton(
                   onPressed: () => {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: !_isEditMode
-                                ? const Text("Search Began")
-                                : const Text("Search Ended"))),
                         setState(() {
                           _isEditMode = !_isEditMode;
                           if (_isEditMode) {
