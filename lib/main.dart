@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'vault-view.dart';
 import 'friend-account.dart';
+import 'account-view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,7 +23,7 @@ class _MyAppState extends State<MyApp> {
     const Text('page_2 - GAME', style: TextStyle(fontSize: 30)),
     const Text('page_3 - ADD WORD', style: TextStyle(fontSize: 30)),
     const Page1(),
-    const Text('page_5 - ACCOUNT', style: TextStyle(fontSize: 30)),
+    const AccountView(name: 'some Account', wordsLearned:  2)
   ];
 
   @override
