@@ -3,32 +3,39 @@ import 'package:flutter/material.dart';
 class WordView extends StatelessWidget {
   WordView({Key? key}) : super(key: key);
   final List<String> syns = ["Pepsi", "Coke", "Another Word"];
+
   @override
   Widget build(BuildContext context) {
-    //this needs to be added at the top of the page, but not under appbar or floating action button
-    /* PopupMenuButton(
-              icon: const Icon(Icons.more_vert),
-              itemBuilder: (context) => const [
-                    PopupMenuItem(
-                      child: ListTile(
-                        leading: Icon(Icons.add_circle_outline),
-                        title: Text("Add To Vault"),
-                      ),
-                      value: 1,
-                    ),
-                    PopupMenuItem(
-                      child: ListTile(
-                        leading: Icon(Icons.share),
-                        title: Text("Share Word"),
-                      ),
-                      value: 2,
-                    )
-                  ]), */
+        //this needs to be added at the top of the page, but not under appbar or floating action button
     return Scaffold(
         floatingActionButton: FloatingActionButton(
             onPressed: () => Navigator.pop(context),
             child: const Icon(Icons.arrow_back)),
         floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+        backgroundColor: Colors.transparent, automaticallyImplyLeading: false,
+        elevation: 0,
+        actions: [
+          PopupMenuButton(
+            icon: const Icon(Icons.more_horiz, color: Colors.black),
+            itemBuilder: (context) => const [
+                  PopupMenuItem(
+                    child: ListTile(
+                      leading: Icon(Icons.add_circle_outline),
+                      title: Text("Add To Vault"),
+                    ),
+                    value: 1,
+                  ),
+                  PopupMenuItem(
+                    child: ListTile(
+                      leading: Icon(Icons.share),
+                      title: Text("Share Word"),
+                    ),
+                    value: 2,
+                  )
+                ])
+        ]),
         body: Align(
             alignment: Alignment.topLeft,
             child: Column(
