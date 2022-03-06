@@ -45,7 +45,7 @@ class _FriendsAccountState extends State<FriendsAccount> {
               icon: Icon(
                   (friendState == true)
                       ? Icons.check_circle
-                      : Icons.unpublished,
+                      : Icons.add_circle,
                   size: 30,
                   color: (friendState == true) ? Colors.blue : Colors.red[900]),
               onPressed: () {
@@ -56,7 +56,7 @@ class _FriendsAccountState extends State<FriendsAccount> {
             ),
             Padding(
               padding: const EdgeInsets.all(3.0),
-              child: Text((friendState == true) ? 'FRIENDS ' : 'UN-FRIENDED',
+              child: Text((friendState == true) ? 'FRIENDS ' : 'ADD FRIEND',
                   style: const TextStyle(
                       fontSize: 30, fontWeight: FontWeight.bold)),
             ),
