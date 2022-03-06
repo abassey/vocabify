@@ -58,16 +58,19 @@ class DictAPI {
         item["antonyms"].forEach((thing){
           antonymslist.add(thing);
         });
+
         definitionslist.add(Definitions(
             definition: item["definition"],
             synonyms: synonymslist,
             antonyms: antonymslist,
-            example: item["example"]
+            example: item["example"] ?? "",
         ));
       });
-      meaningslist.add(Meanings(
+      meaningslist.add(
+        Meanings(
           partofspeech: element["partOfSpeech"],
-          definitions: definitionslist)
+          definitions: definitionslist
+        ),
       );
     });
     return DictItem(word: word, phonetics: phoneticslist, meanings: meaningslist);
