@@ -146,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        const VaultView(vaultTitle: "Vault View")));
+                        VaultView(vaultTitle: vaultName)));
           },
           child: Container(
             width: 30.0,
