@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'friendsdata.dart';
+import '../data/friendsdata.dart';
 import 'friend-account.dart';
 import 'dart:math';
 
