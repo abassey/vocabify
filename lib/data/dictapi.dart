@@ -8,23 +8,6 @@ String DictAPItoJson(List<DictAPI> data) => json.encode(List<DictAPI>.from(data.
 
 
 class DictAPI {
-  DictAPI({
-    required this.word,
-    /*
-    * Phoenetics is broken up into:
-    * text, audio, sourceUrl, license,
-    * */
-    required this.phonetics,
-    /*
-    * Meanings is broken up into:
-    * partOfSpeech and definitions
-    * */
-    required this.meanings,
-  });
-
-  late String word;
-  late List<dynamic> phonetics;
-  late List<dynamic> meanings;
 
   /*
   * Factory function for turning the retrieved json into a
