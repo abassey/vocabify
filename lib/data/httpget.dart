@@ -11,7 +11,7 @@ class HttpGet {
 
   late String word;
   List<dynamic> dictapi = [];
-  late DictAPI dictItem;
+  late DictItem dictItem;
 
   /*
   * This returns the json acquired from the dictionary
@@ -32,10 +32,10 @@ class HttpGet {
   /*
   * Returns a dictionary api item
    */
-  Future<DictAPI> loadDictItem() async{
+  Future<DictItem> loadDictItem() async{
     dictapi = (await getDictJson())!; // Retrieve dictionary json
     // Retrieve dictionary api item
-    dictItem = DictAPI(word: dictapi[0]["word"], meanings: dictapi[0]["meanings"], phonetics: dictapi[0]["phonetics"]);
+    dictItem = DictAPI(word: dictapi[0]["word"], meanings: dictapi[0]["meanings"], phonetics: dictapi[0]["phonetics"]).getDictItem();
     return dictItem;
   }
 

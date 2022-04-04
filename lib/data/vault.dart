@@ -1,6 +1,5 @@
+import 'package:vocabify/data/dictapi.dart';
 
-
-import 'dictapi.dart';
 
 class Vault {
 
@@ -20,6 +19,25 @@ class Vault {
   //Remove a dictionary item using its index
   void removeDictItem(int index) {
     vaultitems.removeAt(index);
+  }
+
+  int findIndex(DictItem word){
+    return vaultitems.indexOf(word);
+  }
+
+  DictItem? findWord(String word){
+    word = word.toLowerCase();
+    DictItem ret = DictItem(word: "", phonetics: [], meanings: []);
+    vaultitems.forEach((element) {
+      if (element.word == word) {
+        ret = element;
+      }
+    });
+    if(ret.word != "") {
+      return ret;
+    } else {
+      return null;
+    }
   }
 
 }

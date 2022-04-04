@@ -1,5 +1,7 @@
 import 'package:vocabify/data/vault.dart';
-import 'dictapi.dart';
+
+import 'package:vocabify/data/dictapi.dart';
+
 
 class VaultHandlerAPI {
 
