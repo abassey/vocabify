@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:provider/provider.dart';
+import '../providers/app_provider.dart';
+import '../providers/app_provider.dart';
 
 class AccountView extends StatefulWidget {
-  const AccountView(
-      {Key? key, required this.name, required this.wordsLearned})
-      : super(key: key);
-  final String name;
-  final int wordsLearned;
+  const AccountView({Key? key}): super(key: key);
+
 
   @override
   _AccountViewState createState() => _AccountViewState();
@@ -19,29 +19,36 @@ class _AccountViewState extends State<AccountView> {
 
   @override
   Widget build(BuildContext context) {
+    final appProvider = Provider.of<AppProvider>(context, listen: false);
+
     return Scaffold(
-        appBar: AppBar(title: Text(widget.name + ' Profile')),
+        appBar: AppBar(title: Text(appProvider.email != null ? appProvider.email! + ' Profile' : "Profile"), actions: [
+          IconButton(onPressed: () => Provider.of<AppProvider>(context, listen: false).signOut()
+          , icon: const Icon(Icons.logout))
+        ],),
+
         body: ListView(
           children: [
-            buildTop(),
-            buildBottom(),
+            buildTop(context),
+            buildBottom(context),
           ],
         ));
   }
 
   //everything below the profile picture
-  Widget buildBottom() {
+  Widget buildBottom(BuildContext context) {
+    final appProvider = Provider.of<AppProvider>(context, listen: false);
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
-          child: Text(widget.name,
+          child: Text(appProvider.email != null ? appProvider.email! + ' Profile' : "Profile",
               style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
         ),
-        Padding(
-          padding: const EdgeInsets.all(3.0),
-          child: Text('Words Learned: ${widget.wordsLearned}',
-              style: const TextStyle(
+        const Padding(
+          padding: EdgeInsets.all(3.0),
+          child: Text('Words Learned: 11',
+              style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                   color: Colors.green)),
@@ -51,7 +58,7 @@ class _AccountViewState extends State<AccountView> {
   }
 
   //Builds a backdrop with a profile picture ontop
-  Widget buildTop() {
+  Widget buildTop(BuildContext context) {
     return Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.center,

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'vault-view.dart';
+import 'package:provider/provider.dart';
+import '../providers/app_provider.dart';
+import 'authentication.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -99,7 +103,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           )
         ],
-      )),
+      ))
     );
   }
 }
