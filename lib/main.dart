@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/app_provider.dart';
 import 'screens/app_navigation.dart';
+import 'package:provider/provider.dart';
+import '../providers/app_provider.dart';
+import './screens/authentication.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,8 +27,22 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const AppNavigation()
+        home: Consumer<AppProvider>(builder: (context, appState, _) => appState.loginState != ApplicationLoginState.loggedIn ? 
+        Scaffold(
+          appBar: AppBar(title: const Text("Vocabify")),
+          body: Center(
+          child: Authentication(
+            email: appState.email,
+            loginState: appState.loginState,
+            startLoginFlow: appState.startLoginFlow,
+            verifyEmail: appState.verifyEmail,
+            signInWithEmailAndPassword: appState.signInWithEmailAndPassword,
+            cancelRegistration: appState.cancelRegistration,
+            registerAccount: appState.registerAccount,
+            signOut: appState.signOut),
+        ))
+        : const AppNavigation()
       ),
-    );
+    ));
   }
 }

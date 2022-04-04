@@ -4,6 +4,10 @@ import 'account-view.dart';
 import 'friends.dart';
 import 'game-view.dart';
 import 'home-screen.dart';
+import 'authentication.dart';
+import 'package:provider/provider.dart';
+import '../providers/app_provider.dart';
+
 
 class AppNavigation extends StatefulWidget {
   const AppNavigation({Key? key}) : super(key: key);
@@ -20,7 +24,7 @@ class _AppNavigationState extends State<AppNavigation> {
     const HomeScreen(),
     const GameView(),
     const FriendsListScreen(),
-    const AccountView(name: "My Name", wordsLearned: 32),
+    const AccountView(),
   ];
 
   @override
