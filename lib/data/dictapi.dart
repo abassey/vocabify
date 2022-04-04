@@ -60,16 +60,16 @@ class DictAPI {
         });
 
         definitionslist.add(Definitions(
-            definition: item["definition"],
-            synonyms: synonymslist,
-            antonyms: antonymslist,
-            example: item["example"] ?? "",
+          definition: item["definition"],
+          synonyms: synonymslist,
+          antonyms: antonymslist,
+          example: item["example"] ?? "",
         ));
       });
       meaningslist.add(
         Meanings(
-          partofspeech: element["partOfSpeech"],
-          definitions: definitionslist
+            partofspeech: element["partOfSpeech"],
+            definitions: definitionslist
         ),
       );
     });
