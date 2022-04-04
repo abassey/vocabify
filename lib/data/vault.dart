@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vocabify/data/dictapi.dart';
 
 
@@ -6,10 +7,22 @@ class Vault {
   Vault({
     required this.name,
     required this.vaultitems,
+    required this.fbusers,
   });
 
   late String name;
   late List<DictItem> vaultitems;
+  late List<User> fbusers;
+
+  //Add a user to the vault
+  void addUser(user){
+    fbusers.add(user);
+  }
+
+  //Remove user from the vault
+  void removeUser(user){
+    fbusers.remove(user);
+  }
 
   //Add a dictionary item to the vault
   void addDictItem(DictItem item) {
@@ -33,6 +46,7 @@ class Vault {
         ret = element;
       }
     });
+
     if(ret.word != "") {
       return ret;
     } else {
