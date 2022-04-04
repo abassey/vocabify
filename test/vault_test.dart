@@ -17,7 +17,7 @@ void main() {
      Here we test if dictionary items are being added accordingly
     */
 
-      Vault vault = Vault(name: "MyWords",vaultitems: [] );
+      Vault vault = Vault(name: "MyWords",vaultitems: [], fbusers: []);
       DictItem testA = await HttpGet(word: "air").loadDictItem() as DictItem;
       vault.addDictItem(testA);
 
@@ -47,7 +47,7 @@ void main() {
        Testing if removing an item from the vault works.
       */
 
-      Vault vault = Vault(name: "MyWords",vaultitems: [] );
+      Vault vault = Vault(name: "MyWords",vaultitems: [] , fbusers: []);
       DictItem testA = await HttpGet(word: "air").loadDictItem() as DictItem;
       vault.addDictItem(testA);
 
