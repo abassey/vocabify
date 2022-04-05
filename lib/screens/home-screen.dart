@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Navigator.push(context,
               MaterialPageRoute(
                 builder: (context) =>
-                  VaultView(vaultTitle: Provider.of<AppProvider>(context, listen: false).vaults[index-1].name)));
+                  VaultView(vaultTitle: Provider.of<AppProvider>(context).vaults[index-1].name)));
     }
   }
 
@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Expanded(
             child: GridView.builder(
-              itemCount: Provider.of<AppProvider>(context, listen: false).vaultItems.length,
+              itemCount: Provider.of<AppProvider>(context).vaultItems.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: 20,
@@ -112,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               itemBuilder: (context, index) => GestureDetector(
                 onTap: () => tapped(index, context),
-                child: Provider.of<AppProvider>(context, listen: false).vaultItems[index],
+                child: Provider.of<AppProvider>(context).vaultItems[index],
               ),
             ),
           )
