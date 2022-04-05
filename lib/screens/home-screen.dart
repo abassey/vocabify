@@ -69,11 +69,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Vocabify"),
-      ),
-      body: Center(
-        child: Column(
+        appBar: AppBar(
+          title: const Text("Vocabify"),
+        ),
+        body: Center(
+            child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.all(10.0),
@@ -110,9 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Expanded(
               child: GridView.builder(
-                itemCount: Provider.of<AppProvider>(context, listen: false)
-                    .vaultItems
-                    .length,
+                itemCount: Provider.of<AppProvider>(context).vaultItems.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 20,
@@ -120,14 +118,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 itemBuilder: (context, index) => GestureDetector(
                   onTap: () => tapped(index, context),
-                  child: Provider.of<AppProvider>(context, listen: false)
-                      .vaultItems[index],
+                  child: Provider.of<AppProvider>(context).vaultItems[index],
                 ),
               ),
             )
           ],
-        ),
-      ),
-    );
+        )));
   }
 }
