@@ -7,33 +7,6 @@ import 'word-view.dart';
 
 enum WordTypes { noun, adj }
 
-List _vaultItems = [
-  {
-    "word": "some word",
-    "pronounce": "This is some part",
-    "word_type": "Noun",
-    "word_desc":
-        "This is some word that is pretty cool! You can read some info about the word and learn something new.",
-    "word_syns": ["Pepsi", "Coke", "Ice Cream", "Mario"]
-  },
-  {
-    "word": "some word",
-    "pronounce": "This is some part",
-    "word_type": "Noun",
-    "word_desc":
-        "This is some word that is pretty cool! You can read some info about the word and learn something new.",
-    "word_syns": ["Pepsi", "Coke", "Ice Cream", "Mario"]
-  },
-  {
-    "word": "some word",
-    "pronounce": "This is some part",
-    "word_type": "Noun",
-    "word_desc":
-        "This is some word that is pretty cool! You can read some info about the word and learn something new.",
-    "word_syns": ["Pepsi", "Coke", "Ice Cream", "Mario"]
-  },
-];
-
 class VaultView extends StatefulWidget {
   const VaultView({Key? key, required this.vault}) : super(key: key);
   final Vault vault;
@@ -85,6 +58,7 @@ class _VaultViewState extends State<VaultView> {
           setState(() async {
             DictItem toAdd = await HttpGet(word: word).loadDictItem();
             VaultHandlerAPI(vault: widget.vault).addWordtoVault(toAdd);
+            //VaultHandlerAPI(vault: widget.vault).addWordtoVault(toAdd);
             print(toAdd);
           });
         },
