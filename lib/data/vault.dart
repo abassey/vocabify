@@ -9,7 +9,8 @@ class Vault {
   });
 
   late String name;
-  late List<DictItem> vaultitems;
+  late List<dynamic> vaultitems;
+  
 
   //Add a dictionary item to the vault
   void addDictItem(DictItem item) {
