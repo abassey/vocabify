@@ -54,8 +54,9 @@ class _VaultViewState extends State<VaultView> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    WordView(word: widget.vault.vaultitems[index].word)));
+                builder: (context) => WordView(
+                    word: widget.vault.vaultitems[index]
+                        .word))); //this should change to dicttime to get the list of meanings and phonetics
       },
     );
   }
