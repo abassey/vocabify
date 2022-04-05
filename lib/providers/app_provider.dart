@@ -88,7 +88,7 @@ class AppProvider extends ChangeNotifier {
           _vaults = [];
           initVaultItems();
           for (final document in snapshot.docs) {
-            _vaults.add(Vault(name: document['name'] as String, vaultitems: []));
+            _vaults.add(Vault(name: document['name'] as String, vaultitems: [], fbusers: []));
             _vaultItems.add(
                     Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -118,7 +118,7 @@ class AppProvider extends ChangeNotifier {
   }
 
   void addGridChild(String vaultName, BuildContext context) {
-      _vaults.add(Vault(name: vaultName, vaultitems: []));
+      _vaults.add(Vault(name: vaultName, vaultitems: [], fbusers: []));
       _vaultItems.add(Padding(
         padding: const EdgeInsets.all(10.0),
         child: GestureDetector(
