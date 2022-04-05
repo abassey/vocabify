@@ -83,8 +83,6 @@ class AppProvider extends ChangeNotifier {
 
     FirebaseAuth.instance.userChanges().listen((user) {
       if (user != null) {
-        print("in");
-        print(user.uid);
         currentUser = user;
         _loginState = ApplicationLoginState.loggedIn;
         _vaultItemSubscription = FirebaseFirestore.instance
@@ -118,7 +116,6 @@ class AppProvider extends ChangeNotifier {
         });
       } else {
         _loginState = ApplicationLoginState.emailAddress;
-        print("out");
         notifyListeners();
       }
       notifyListeners();
