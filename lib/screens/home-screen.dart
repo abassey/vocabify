@@ -54,9 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (index == 0) {
       final vaultName = await openDialog();
       if (vaultName == null || vaultName.isEmpty) return;
-      setState(() {
-        Provider.of<AppProvider>(context, listen: false).addVaultToFireStore(Vault(name: vaultName, vaultitems: [], fbusers: []), context);
-      });
+      Provider.of<AppProvider>(context, listen: false).addVaultToFireStore(Vault(name: vaultName, vaultitems: [], fbusers: []), context);
     } else {      
       Navigator.push(context,
               MaterialPageRoute(
