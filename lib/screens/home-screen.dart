@@ -84,7 +84,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => VaultView(vault: coreVault)));
+                          builder: (context) => VaultView(
+                              vault:
+                                  coreVault))); //add provider of to this line ot save the words in this vault
                 },
                 child: Container(
                   width: 500,

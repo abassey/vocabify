@@ -85,6 +85,7 @@ class AppProvider extends ChangeNotifier {
       if (user != null) {
         currentUser = user;
         _loginState = ApplicationLoginState.loggedIn;
+        _displayName = currentUser?.displayName;
         _vaultItemSubscription = FirebaseFirestore.instance
             .collection('vaults')
             .where('uid', isEqualTo: user.uid)
@@ -179,7 +180,6 @@ class AppProvider extends ChangeNotifier {
         email: email,
         password: password,
       );
-      var currentUser = FirebaseAuth.instance.currentUser;
       _displayName = currentUser?.displayName;
     } on FirebaseAuthException catch (e) {
       errorCallback(e);

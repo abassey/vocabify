@@ -60,6 +60,7 @@ class _VaultViewState extends State<VaultView> {
             VaultHandlerAPI(vault: widget.vault).addWordtoVault(toAdd);
             //VaultHandlerAPI(vault: widget.vault).addWordtoVault(toAdd);
             print(toAdd);
+            Navigator.of(context).pop();
           });
         },
       ),
