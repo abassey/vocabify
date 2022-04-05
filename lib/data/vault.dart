@@ -11,7 +11,8 @@ class Vault {
   });
 
   late String name;
-  late List<DictItem> vaultitems;
+  late List<dynamic> vaultitems;
+  
   late List<User> fbusers;
 
   //Add a user to the vault
@@ -23,7 +24,7 @@ class Vault {
   void removeUser(user){
     fbusers.remove(user);
   }
-
+  
   //Add a dictionary item to the vault
   void addDictItem(DictItem item) {
     vaultitems.add(item);

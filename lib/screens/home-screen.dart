@@ -3,6 +3,7 @@ import 'vault-view.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import 'authentication.dart';
+import '../data/vault.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -49,57 +50,18 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   );
 
-  //grid functions
-  List<Widget> gridChild = [
-    Stack(
-      children: [
-        Positioned.fill(
-          child: Container(
-            margin: const EdgeInsets.all(10.0),
-            width: 30.0,
-            height: 50.0,
-            decoration: const BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.all(Radius.circular(20))),
-          ),
-        ),
-        const Positioned.fill(
-          child: Icon(
-            Icons.add_box,
-            size: 100,
-            color: Colors.white,
-          ),
-        ),
-      ],
-    ),
-  ];
-
-  void addToGrid(String vaultName) {
-    setState(() {
-      gridChild.add(Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: GestureDetector(
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        VaultView(vaultTitle: vaultName)));
-          },
-          child: Container(
-            width: 30.0,
-            height: 50.0,
-            decoration: const BoxDecoration(color: Color.fromARGB(255, 20, 74, 118), borderRadius: BorderRadius.all(Radius.circular(20))),
-            child: Center(child: Text(vaultName, style: const TextStyle(fontSize: 25, color: Colors.white))),
-          ),
-        ),
-      ));
-    });
-  }
-
-  void tapped(int index) async {
+  void tapped(int index, BuildContext context) async {
     if (index == 0) {
       final vaultName = await openDialog();
       if (vaultName == null || vaultName.isEmpty) return;
-      addToGrid(vaultName);
+      setState(() {
+        Provider.of<AppProvider>(context, listen: false).addVaultToFireStore(Vault(name: vaultName, vaultitems: []), context);
+      });
+    } else {      
+      Navigator.push(context,
+              MaterialPageRoute(
+                builder: (context) =>
+                  VaultView(vaultTitle: Provider.of<AppProvider>(context, listen: false).vaults[index-1].name)));
     }
   }
 
@@ -142,15 +104,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Expanded(
             child: GridView.builder(
-              itemCount: gridChild.length,
+              itemCount: Provider.of<AppProvider>(context, listen: false).vaultItems.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: 20,
                 crossAxisSpacing: 10,
               ),
               itemBuilder: (context, index) => GestureDetector(
-                onTap: () => tapped(index),
-                child: gridChild[index],
+                onTap: () => tapped(index, context),
+                child: Provider.of<AppProvider>(context, listen: false).vaultItems[index],
               ),
             ),
           )
