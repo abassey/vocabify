@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
-import '../providers/app_provider.dart';
 
 class AccountView extends StatefulWidget {
-  const AccountView({Key? key}): super(key: key);
-
+  const AccountView({Key? key}) : super(key: key);
 
   @override
   _AccountViewState createState() => _AccountViewState();
@@ -22,11 +20,15 @@ class _AccountViewState extends State<AccountView> {
     final appProvider = Provider.of<AppProvider>(context, listen: false);
 
     return Scaffold(
-        appBar: AppBar(title: Text(appProvider.email != null ? appProvider.email! + ' Profile' : "Profile"), actions: [
-          IconButton(onPressed: () => Provider.of<AppProvider>(context, listen: false).signOut()
-          , icon: const Icon(Icons.logout))
-        ],),
-
+        appBar: AppBar(
+          title: Text(appProvider.name != null ? appProvider.name! : "Profile"),
+          actions: [
+            IconButton(
+                onPressed: () =>
+                    Provider.of<AppProvider>(context, listen: false).signOut(),
+                icon: const Icon(Icons.logout))
+          ],
+        ),
         body: ListView(
           children: [
             buildTop(context),
@@ -42,8 +44,10 @@ class _AccountViewState extends State<AccountView> {
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
-          child: Text(appProvider.email != null ? appProvider.email! + ' Profile' : "Profile",
-              style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
+          child: Text(appProvider.name != null ? appProvider.name! : "Profile",
+              textAlign: TextAlign.center,
+              style:
+                  const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
         ),
         const Padding(
           padding: EdgeInsets.all(3.0),

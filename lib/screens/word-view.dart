@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vocabify/data/dictapi.dart';
+import 'package:vocabify/data/httpget.dart';
 
 class WordView extends StatelessWidget {
   WordView({Key? key, required this.word}) : super(key: key);
@@ -7,7 +9,7 @@ class WordView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-        //this needs to be added at the top of the page, but not under appbar or floating action button
+    //this needs to be added at the top of the page, but not under appbar or floating action button
     return Scaffold(
         floatingActionButton: FloatingActionButton(
             onPressed: () => Navigator.pop(context),
@@ -15,28 +17,29 @@ class WordView extends StatelessWidget {
         floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
         extendBodyBehindAppBar: true,
         appBar: AppBar(
-        backgroundColor: Colors.transparent, automaticallyImplyLeading: false,
-        elevation: 0,
-        actions: [
-          PopupMenuButton(
-            icon: const Icon(Icons.more_horiz, color: Colors.black),
-            itemBuilder: (context) => const [
-                  PopupMenuItem(
-                    child: ListTile(
-                      leading: Icon(Icons.add_circle_outline),
-                      title: Text("Add To Vault"),
-                    ),
-                    value: 1,
-                  ),
-                  PopupMenuItem(
-                    child: ListTile(
-                      leading: Icon(Icons.share),
-                      title: Text("Share Word"),
-                    ),
-                    value: 2,
-                  )
-                ])
-        ]),
+            backgroundColor: Colors.transparent,
+            automaticallyImplyLeading: false,
+            elevation: 0,
+            actions: [
+              PopupMenuButton(
+                  icon: const Icon(Icons.more_horiz, color: Colors.black),
+                  itemBuilder: (context) => const [
+                        PopupMenuItem(
+                          child: ListTile(
+                            leading: Icon(Icons.add_circle_outline),
+                            title: Text("Add To Vault"),
+                          ),
+                          value: 1,
+                        ),
+                        PopupMenuItem(
+                          child: ListTile(
+                            leading: Icon(Icons.share),
+                            title: Text("Share Word"),
+                          ),
+                          value: 2,
+                        )
+                      ])
+            ]),
         body: Align(
             alignment: Alignment.topLeft,
             child: Column(

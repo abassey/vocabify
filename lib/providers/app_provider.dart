@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // new
-import 'package:firebase_core/firebase_core.dart'; 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:vocabify/firebase_options.dart';
 import '../screens/authentication.dart';
 
 class AppProvider extends ChangeNotifier {
-  
   ApplicationLoginState _loginState = ApplicationLoginState.emailAddress;
   ApplicationLoginState get loginState => _loginState;
   String? _email;
   String? get email => _email;
+  String? _displayName;
+  String? get name => _displayName;
 
   AppProvider() {
     init();
@@ -36,9 +37,11 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> verifyEmail(String email, void Function(FirebaseAuthException e) errorCallback) async {
+  Future<void> verifyEmail(String email,
+      void Function(FirebaseAuthException e) errorCallback) async {
     try {
-      var methods = await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+      var methods =
+          await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
       if (methods.contains('password')) {
         _loginState = ApplicationLoginState.password;
       } else {
@@ -61,6 +64,8 @@ class AppProvider extends ChangeNotifier {
         email: email,
         password: password,
       );
+      var currentUser = FirebaseAuth.instance.currentUser;
+      _displayName = currentUser?.displayName;
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
     }
@@ -89,5 +94,10 @@ class AppProvider extends ChangeNotifier {
     _loginState = ApplicationLoginState.emailAddress;
     FirebaseAuth.instance.signOut();
     notifyListeners();
+  }
+
+  Future<void> getUser() async {
+    var currentUser = FirebaseAuth.instance.currentUser;
+    _displayName = currentUser?.displayName;
   }
 }

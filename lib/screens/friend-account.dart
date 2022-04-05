@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vocabify/data/vault.dart';
 import 'vault-view.dart';
 import 'dart:math';
 
@@ -39,16 +40,15 @@ class _FriendsAccountState extends State<FriendsAccount> {
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: Text(widget.name,
-              style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
+              style:
+                  const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             IconButton(
               icon: Icon(
-                  (friendState == true)
-                      ? Icons.check_circle
-                      : Icons.add_circle,
+                  (friendState == true) ? Icons.check_circle : Icons.add_circle,
                   size: 30,
                   color: (friendState == true) ? Colors.blue : Colors.red[900]),
               onPressed: () {
@@ -87,11 +87,9 @@ class _FriendsAccountState extends State<FriendsAccount> {
   Widget buildVault() {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    const VaultView(vaultTitle: "Vault View")));
+        Vault vault = Vault(name: "Vault View", vaultitems: []);
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => VaultView(vault: vault)));
       },
       child: Container(
           margin: const EdgeInsets.all(10.0),
