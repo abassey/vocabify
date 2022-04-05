@@ -82,18 +82,10 @@ class _VaultViewState extends State<VaultView> {
         onPressed: () async {
           final word = await openDialog();
           if (word == null || word.isEmpty) return;
-          setState(() {
-            DictItem toAdd = HttpGet(word: word).loadDictItem() as DictItem;
+          setState(() async {
+            DictItem toAdd = await HttpGet(word: word).loadDictItem();
             VaultHandlerAPI(vault: widget.vault).addWordtoVault(toAdd);
             print(toAdd);
-            // _vaultItems.add({
-            //   "word": word,
-            //   "pronounce": "This is some part",
-            //   "word_type": "Noun",
-            //   "word_desc":
-            //       "This is some word that is pretty cool! You can read some info about the word and learn something new.",
-            //   "word_syns": ["Pepsi", "Coke", "Ice Cream", "Mario"]
-            // });
           });
         },
       ),
