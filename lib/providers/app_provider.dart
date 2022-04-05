@@ -76,8 +76,6 @@ class AppProvider extends ChangeNotifier {
 
     FirebaseAuth.instance.userChanges().listen((user) {
       if (user != null) {
-        print("in");
-        print(user.uid);
         currentUser = user;
         _loginState = ApplicationLoginState.loggedIn;
         _vaultItemSubscription = FirebaseFirestore.instance
@@ -103,13 +101,14 @@ class AppProvider extends ChangeNotifier {
           }
           notifyListeners();
         });
+        notifyListeners();
       } else {
         _loginState = ApplicationLoginState.emailAddress;
-        print("out");
         notifyListeners();
       }
       notifyListeners();
     });
+    notifyListeners();
   }
 
   void startLoginFlow() {
@@ -186,7 +185,7 @@ class AppProvider extends ChangeNotifier {
           .createUserWithEmailAndPassword(email: email, password: password);
       await credential.user!.updateDisplayName(displayName);
     } on FirebaseAuthException catch (e) {
-      errorCallback(e);
+      errorCallback(e); 
     }
   }
 
