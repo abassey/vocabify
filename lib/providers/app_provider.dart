@@ -104,6 +104,10 @@ class AppProvider extends ChangeNotifier {
         notifyListeners();
       } else {
         _loginState = ApplicationLoginState.emailAddress;
+        _vaults = [];
+        _vaultItems = [];
+        _vaultItemSubscription?.cancel();
+         
         notifyListeners();
       }
       notifyListeners();
