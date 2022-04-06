@@ -70,7 +70,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Vocabify"),
+          title: const Text(
+            "Vocabify",
+            style: TextStyle(fontSize: 30),
+          ),
         ),
         body: Center(
             child: Column(

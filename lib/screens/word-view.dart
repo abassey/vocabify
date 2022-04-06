@@ -5,7 +5,15 @@ import 'package:vocabify/data/httpget.dart';
 class WordView extends StatelessWidget {
   WordView({Key? key, required this.word}) : super(key: key);
   final List<String> syns = ["Pepsi", "Coke", "Another Word"];
-  final String word;
+  final DictItem word;
+
+  Widget _buildRow(item) {
+    for (var def in item) {
+      return ListTile(
+        title: Text(def.definition),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +62,7 @@ class WordView extends StatelessWidget {
                           children: [
                             const Padding(
                                 padding: EdgeInsets.fromLTRB(20, 80, 0, 0)),
-                            Text(word,
+                            Text(word.word,
                                 style: const TextStyle(
                                     fontSize: 30,
                                     //fontStyle: FontStyle.italic,
@@ -63,9 +71,25 @@ class WordView extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: const [
                                   Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                      child: Text("/wərd/")),
-                                  Icon(Icons.audio_file)
+                                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                    // child: ListView.builder(
+                                    //   // Let the ListView know how many items it needs to build.
+                                    //   itemCount: word.phonetics.length,
+                                    //   scrollDirection: Axis.vertical,
+                                    //   shrinkWrap: true,
+                                    //   // Provide a builder function. This is where the magic happens.
+                                    //   // Convert each item into a widget based on the type of item it is.
+                                    //   itemBuilder: (context, index) {
+                                    //     final item = word.phonetics[index];
+                                    //     print(item.text);
+
+                                    //     return ListTile(
+                                    //       title: Text(item.text),
+                                    //     );
+                                    //   },
+                                    // ),
+                                  ),
+                                  Icon(Icons.audio_file),
                                 ]),
                           ])),
                   Padding(
@@ -73,14 +97,28 @@ class WordView extends StatelessWidget {
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text("Description: ",
+                          children: [
+                            const Text("Description: ",
                                 style: TextStyle(
                                     fontSize: 25,
                                     fontStyle: FontStyle.italic,
                                     fontWeight: FontWeight.w500)),
-                            Padding(padding: EdgeInsets.all(4)),
-                            Text(
+                            const Padding(padding: EdgeInsets.all(4)),
+                            ListView.builder(
+                              // Let the ListView know how many items it needs to build.
+                              itemCount: word.phonetics.length,
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              // Provide a builder function. This is where the magic happens.
+                              // Convert each item into a widget based on the type of item it is.
+                              itemBuilder: (context, index) {
+                                final item = word.meanings[index].definitions;
+                                print(item);
+
+                                return _buildRow(item);
+                              },
+                            ),
+                            const Text(
                                 "This is a descrition that will go here. This description will define the word...",
                                 textAlign: TextAlign.start,
                                 overflow: TextOverflow.visible,

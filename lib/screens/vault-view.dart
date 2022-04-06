@@ -5,8 +5,6 @@ import 'package:vocabify/data/vault.dart';
 import 'package:vocabify/data/vaulthandling.dart';
 import 'word-view.dart';
 
-enum WordTypes { noun, adj }
-
 class VaultView extends StatefulWidget {
   const VaultView({Key? key, required this.vault}) : super(key: key);
   final Vault vault;
@@ -22,14 +20,18 @@ class _VaultViewState extends State<VaultView> {
 
   Widget _buildRow(index) {
     return ListTile(
-      title: Text(widget.vault.vaultitems[index].word),
+      title: Text(
+        widget.vault.vaultitems[index].word,
+        style: const TextStyle(fontSize: 20),
+      ),
+      trailing: const Icon(Icons.arrow_forward_ios),
       onTap: () {
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => WordView(
-                    word: widget.vault.vaultitems[index]
-                        .word))); //this should change to dicttime to get the list of meanings and phonetics
+                    word: widget.vault.vaultitems[
+                        index]))); //this should change to dicttime to get the list of meanings and phonetics
       },
     );
   }
@@ -55,12 +57,10 @@ class _VaultViewState extends State<VaultView> {
         onPressed: () async {
           final word = await openDialog();
           if (word == null || word.isEmpty) return;
-          setState(() async {
-            DictItem toAdd = await HttpGet(word: word).loadDictItem();
+          DictItem toAdd = await HttpGet(word: word).loadDictItem();
+          setState(() {
             VaultHandlerAPI(vault: widget.vault).addWordtoVault(toAdd);
-            //VaultHandlerAPI(vault: widget.vault).addWordtoVault(toAdd);
             print(toAdd);
-            Navigator.of(context).pop();
           });
         },
       ),
@@ -71,7 +71,11 @@ class _VaultViewState extends State<VaultView> {
             children: [
               _isEditMode
                   ? const TextBoxSearch()
-                  : Text(widget.vault.name, textAlign: TextAlign.start),
+                  : Text(
+                      widget.vault.name,
+                      textAlign: TextAlign.start,
+                      style: const TextStyle(fontSize: 25),
+                    ),
             ],
             mainAxisSize: MainAxisSize.min),
         centerTitle: false,
