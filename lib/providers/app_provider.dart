@@ -86,7 +86,7 @@ class AppProvider extends ChangeNotifier {
           _vaults = [];
           initVaultItems();
           for (final document in snapshot.docs) {
-            _vaults.add(Vault(name: document['name'] as String, vaultitems: [], fbusers: []));
+            _vaults.add(Vault(name: document['name'] as String, vaultitems: document['items'] as List<dynamic>, fbusers: []));
             _vaultItems.add(
                     Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -130,7 +130,7 @@ class AppProvider extends ChangeNotifier {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        VaultView(vaultTitle: vaultName)));
+                        VaultView(vaultTitle: vaultName, vaultItems: [])));
           },
           child: Container(
             width: 30.0,
@@ -204,12 +204,13 @@ class AppProvider extends ChangeNotifier {
 
   Future<DocumentReference> addVaultToFireStore(Vault item, BuildContext context) {
     addGridChild(item.name, context);
+    List<dynamic> vault_items = item.vaultitems;
     return FirebaseFirestore.instance
     .collection('vaults')
     .add(<String, dynamic> {
       'name': item.name,
       'uid': currentUser!.uid,
-      'items': []
+      'items': vault_items
     });
   }
 }

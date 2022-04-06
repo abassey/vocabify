@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'word-view.dart';
+import 'package:provider/provider.dart';
+import '../providers/vault_provider.dart';
+import '../data/vault.dart';
+import '../data/dictapi.dart';
 
 enum WordTypes { noun, adj }
 
@@ -31,9 +35,9 @@ List _vaultItems = [
 ];
 
 class VaultView extends StatefulWidget {
-  const VaultView({Key? key, required this.vaultTitle}) : super(key: key);
+  VaultView({Key? key, required this.vaultTitle, required this.vaultItems}) : super(key: key);
   final String vaultTitle;
-
+  List<dynamic> vaultItems;
   @override
   _VaultViewState createState() => _VaultViewState();
 }
@@ -46,15 +50,11 @@ class _VaultViewState extends State<VaultView> {
   Widget _buildRow(index) {
     return ListTile(
       title: Text(
-        _vaultItems[index]["word"] +
-            " / (" +
-            _vaultItems[index]["pronounce"] +
-            ") / " +
-            _vaultItems[index]["word_type"],
+        Provider.of<VaultProvider>(context).vaultItems[index]["word"]
       ),
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => WordView(word: _vaultItems[index]["word"])));
+            context, MaterialPageRoute(builder: (context) => WordView(word: Provider.of<VaultProvider>(context).vaultItems[index]["word"])));
       },
     );
   }
@@ -63,6 +63,7 @@ class _VaultViewState extends State<VaultView> {
   @override
   void initState(){
     super.initState();
+    Provider.of<VaultProvider>(context).initVaultItems(widget.vaultItems);
     controller = TextEditingController();
   }
 
@@ -74,21 +75,14 @@ class _VaultViewState extends State<VaultView> {
 
   @override
   Widget build(BuildContext context) {
+    final vault_provider = Provider.of<VaultProvider>(context);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () async {
           final word = await openDialog();
           if (word == null || word.isEmpty) return;
-          setState(() {
-            _vaultItems.add({
-              "word": word,
-              "pronounce": "This is some part",
-              "word_type": "Noun",
-              "word_desc": "This is some word that is pretty cool! You can read some info about the word and learn something new.",
-              "word_syns": ["Pepsi", "Coke", "Ice Cream", "Mario"]
-            });
-          });
+          vault_provider.addToVault(DictItem(word: word, definitions: ["test", "another def", "done"], synonyms: ["Pepsi", "coke"]));
         },
       ),
       appBar: AppBar(
@@ -140,10 +134,10 @@ class _VaultViewState extends State<VaultView> {
         ],
       ),
       body: ListView.builder(
-        itemCount: _vaultItems.length + (_vaultItems.length - 1 < 0 ? 0 : _vaultItems.length - 1),
+        itemCount: vault_provider.vaultItems.length + (vault_provider.vaultItems.length - 1 < 0 ? 0 : vault_provider.vaultItems.length - 1),
         itemBuilder: (context, i) {
           var index = (i ~/ 2);
-          if (i.isOdd || index >= _vaultItems.length) {
+          if (i.isOdd || index >= vault_provider.vaultItems.length) {
             return const Padding(
               padding: EdgeInsets.symmetric(horizontal: 7.0),
               child: Divider(

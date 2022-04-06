@@ -41,39 +41,19 @@ class DictAPI {
   * instance of DictAPI
    */
   getDictItem(){
-    List<Phonetics> phoneticslist = [];
-    List<Definitions> definitionslist = [];
-    List<Meanings> meaningslist = [];
+    List<String> definitions = [];
     List<String> synonymslist = [];
-    List<String> antonymslist = [];
-    phonetics.forEach((element) {
-      phoneticslist.add(Phonetics(text: element["text"], audio: element["audio"]));
-    });
-    meanings.forEach((element) {
-      definitionslist = [];
+    for (var element in meanings) {
       element["definitions"].forEach((item){
         item["synonyms"].forEach((thing){
           synonymslist.add(thing);
         });
-        item["antonyms"].forEach((thing){
-          antonymslist.add(thing);
-        });
 
-        definitionslist.add(Definitions(
-          definition: item["definition"],
-          synonyms: synonymslist,
-          antonyms: antonymslist,
-          example: item["example"] ?? "",
-        ));
+        definitions.add(item["definition"]);
+
       });
-      meaningslist.add(
-        Meanings(
-            partofspeech: element["partOfSpeech"],
-            definitions: definitionslist
-        ),
-      );
-    });
-    return DictItem(word: word, phonetics: phoneticslist, meanings: meaningslist);
+    }
+    return DictItem(word: word, definitions: definitions, synonyms: synonymslist);
   }
 
 }
@@ -81,40 +61,13 @@ class DictAPI {
 class DictItem {
   DictItem({
     required this.word,
-    required this.phonetics,
-    required this.meanings,
+    required this.definitions,
+    required this.synonyms,
   });
   late String word;
-  late List<Phonetics> phonetics;
-  late List<Meanings> meanings;
+  late List<String> definitions;
+  late List<String> synonyms;
 
-  @override
-  String toString() {
-    late String ret = "Word: " + word + "\n";
-    ret = ret + "Phonetics:\n";
-    phonetics.forEach((element) {
-      ret = ret + "   Text: " + element.text + "    \n    Audio: " + element.audio;
-      ret = ret + "\n\n";
-    });
-    meanings.forEach((element) {
-      ret = ret + "Meanings:\n";
-      ret = ret + "   PartOfSpeech: " + element.partofspeech +"\n";
-      ret = ret + "   Definitions: \n";
-      element.definitions.forEach((item) {
-        ret = ret + "       Definition: " + item.definition + "\n";
-        ret = ret + "       Synonyms: " + "\n";
-        item.synonyms.forEach((thing) {
-          ret = ret + "           Synonym: " + thing + "\n";
-        });
-        ret = ret + "       Antonyms: " + "\n";
-        item.antonyms.forEach((thing) {
-          ret = ret + "           Antonym: " + thing + "\n";
-        });
-        ret = ret + "       Example: " + item.example + "\n\n";
-      });
-    });
-    return ret;
-  }
 }
 
 class Definitions {

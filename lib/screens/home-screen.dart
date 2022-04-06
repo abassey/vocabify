@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Navigator.push(context,
               MaterialPageRoute(
                 builder: (context) =>
-                  VaultView(vaultTitle: Provider.of<AppProvider>(context).vaults[index-1].name)));
+                  VaultView(vaultTitle: Provider.of<AppProvider>(context).vaults[index-1].name, vaultItems: Provider.of<AppProvider>(context).vaults[index - 1].vaultitems)));
     }
   }
 
@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            const VaultView(vaultTitle: "All Words")));
+                            VaultView(vaultTitle: "All Words", vaultItems: [])));
               },
               child: Container(
                 width: 500,
