@@ -18,7 +18,7 @@ class _AccountViewState extends State<AccountView> {
 
   @override
   Widget build(BuildContext context) {
-    final appProvider = Provider.of<AppProvider>(context, listen: false);
+    final appProvider = Provider.of<AppProvider>(context);
 
     return Scaffold(
         appBar: AppBar(
@@ -26,7 +26,7 @@ class _AccountViewState extends State<AccountView> {
           actions: [
             IconButton(
                 onPressed: () =>
-                    Provider.of<AppProvider>(context, listen: false).signOut(),
+                    appProvider.signOut(),
                 icon: const Icon(Icons.logout))
           ],
         ),
