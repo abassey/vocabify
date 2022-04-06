@@ -206,6 +206,8 @@ class AppProvider extends ChangeNotifier {
       var credential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
       await credential.user!.updateDisplayName(displayName);
+      await currentUser?.reload();
+      addUserToFireStore();
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
     }
@@ -219,7 +221,6 @@ class AppProvider extends ChangeNotifier {
   }
 
   // Interacting with the FireStore vaults
-
   Future<DocumentReference> addVaultToFireStore(
       Vault item, BuildContext context) {
     addGridChild(item.name, context);
@@ -231,4 +232,17 @@ class AppProvider extends ChangeNotifier {
       'items': []
     });
   }
+
+  //Creating user collection
+  Future<DocumentReference> addUserToFireStore() async {
+    return FirebaseFirestore.instance
+      .collection('users')
+      .add(<String, dynamic>{
+        'name': currentUser!.displayName,
+        'email':currentUser!.email,
+        'uid': currentUser!.uid,
+        'friends': [],
+      });
+  }
+
 }
