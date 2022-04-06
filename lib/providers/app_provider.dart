@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // new
-import 'package:firebase_core/firebase_core.dart'; 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:vocabify/data/dictapi.dart';
 import 'package:vocabify/firebase_options.dart';
@@ -12,21 +12,25 @@ import '../data/vault.dart';
 import '../screens/vault-view.dart';
 
 class AppProvider extends ChangeNotifier {
-  
   ApplicationLoginState _loginState = ApplicationLoginState.emailAddress;
   ApplicationLoginState get loginState => _loginState;
   String? _email;
   String? get email => _email;
+  String? _displayName;
+  String? get name => _displayName;
 
   StreamSubscription<QuerySnapshot>? _vaultItemSubscription;
-  List<Widget> _vaultItems = [Stack(
+  List<Widget> _vaultItems = [
+    Stack(
       children: [
         Positioned.fill(
           child: Container(
             margin: const EdgeInsets.all(10.0),
             width: 30.0,
             height: 50.0,
-            decoration: const BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.all(Radius.circular(20))),
+            decoration: const BoxDecoration(
+                color: Colors.black54,
+                borderRadius: BorderRadius.all(Radius.circular(20))),
           ),
         ),
         const Positioned.fill(
@@ -37,7 +41,8 @@ class AppProvider extends ChangeNotifier {
           ),
         ),
       ],
-    )];
+    )
+  ];
   List<Widget> get vaultItems => _vaultItems;
   List<Vault> _vaults = [];
   List<Vault> get vaults => _vaults;
@@ -55,7 +60,9 @@ class AppProvider extends ChangeNotifier {
             margin: const EdgeInsets.all(10.0),
             width: 30.0,
             height: 50.0,
-            decoration: const BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.all(Radius.circular(20))),
+            decoration: const BoxDecoration(
+                color: Colors.black54,
+                borderRadius: BorderRadius.all(Radius.circular(20))),
           ),
         ),
         const Positioned.fill(
@@ -78,6 +85,7 @@ class AppProvider extends ChangeNotifier {
       if (user != null) {
         currentUser = user;
         _loginState = ApplicationLoginState.loggedIn;
+        _displayName = currentUser?.displayName;
         _vaultItemSubscription = FirebaseFirestore.instance
             .collection('vaults')
             .where('uid', isEqualTo: user.uid)
@@ -86,18 +94,24 @@ class AppProvider extends ChangeNotifier {
           _vaults = [];
           initVaultItems();
           for (final document in snapshot.docs) {
-            _vaults.add(Vault(name: document['name'] as String, vaultitems: [], fbusers: []));
+            _vaults.add(Vault(
+                name: document['name'] as String, vaultitems: [], fbusers: []));
             _vaultItems.add(
-                    Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Container(
-                        width: 30.0,
-                        height: 50.0,
-                        decoration: const BoxDecoration(color: Color.fromARGB(255, 20, 74, 118), borderRadius: BorderRadius.all(Radius.circular(20))),
-                        child: Center(child: Text(document['name'] as String, style: const TextStyle(fontSize: 25, color: Colors.white))),
-                      ),
-                    ),
-                  );
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Container(
+                  width: 30.0,
+                  height: 50.0,
+                  decoration: const BoxDecoration(
+                      color: Color.fromARGB(255, 20, 74, 118),
+                      borderRadius: BorderRadius.all(Radius.circular(20))),
+                  child: Center(
+                      child: Text(document['name'] as String,
+                          style: const TextStyle(
+                              fontSize: 25, color: Colors.white))),
+                ),
+              ),
+            );
           }
           notifyListeners();
         });
@@ -107,7 +121,7 @@ class AppProvider extends ChangeNotifier {
         _vaults = [];
         _vaultItems = [];
         _vaultItemSubscription?.cancel();
-         
+
         notifyListeners();
       }
       notifyListeners();
@@ -121,32 +135,35 @@ class AppProvider extends ChangeNotifier {
   }
 
   void addGridChild(String vaultName, BuildContext context) {
-      _vaults.add(Vault(name: vaultName, vaultitems: [], fbusers: []));
-      _vaultItems.add(Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: GestureDetector(
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        VaultView(vaultTitle: vaultName)));
-          },
-          child: Container(
-            width: 30.0,
-            height: 50.0,
-            decoration: const BoxDecoration(color: Color.fromARGB(255, 20, 74, 118), borderRadius: BorderRadius.all(Radius.circular(20))),
-            child: Center(child: Text(vaultName, style: const TextStyle(fontSize: 25, color: Colors.white))),
-          ),
+    _vaults.add(Vault(name: vaultName, vaultitems: [], fbusers: []));
+    _vaultItems.add(Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: GestureDetector(
+        onTap: () {
+          Vault vault = Vault(name: vaultName, vaultitems: [], fbusers: []);
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => VaultView(vault: vault)));
+        },
+        child: Container(
+          width: 30.0,
+          height: 50.0,
+          decoration: const BoxDecoration(
+              color: Color.fromARGB(255, 20, 74, 118),
+              borderRadius: BorderRadius.all(Radius.circular(20))),
+          child: Center(
+              child: Text(vaultName,
+                  style: const TextStyle(fontSize: 25, color: Colors.white))),
         ),
-      ));
-      notifyListeners();
+      ),
+    ));
+    notifyListeners();
   }
 
-
-  Future<void> verifyEmail(String email, void Function(FirebaseAuthException e) errorCallback) async {
+  Future<void> verifyEmail(String email,
+      void Function(FirebaseAuthException e) errorCallback) async {
     try {
-      var methods = await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+      var methods =
+          await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
       if (methods.contains('password')) {
         _loginState = ApplicationLoginState.password;
       } else {
@@ -169,6 +186,7 @@ class AppProvider extends ChangeNotifier {
         email: email,
         password: password,
       );
+      _displayName = currentUser?.displayName;
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
     }
@@ -189,7 +207,7 @@ class AppProvider extends ChangeNotifier {
           .createUserWithEmailAndPassword(email: email, password: password);
       await credential.user!.updateDisplayName(displayName);
     } on FirebaseAuthException catch (e) {
-      errorCallback(e); 
+      errorCallback(e);
     }
   }
 
@@ -202,11 +220,12 @@ class AppProvider extends ChangeNotifier {
 
   // Interacting with the FireStore vaults
 
-  Future<DocumentReference> addVaultToFireStore(Vault item, BuildContext context) {
+  Future<DocumentReference> addVaultToFireStore(
+      Vault item, BuildContext context) {
     addGridChild(item.name, context);
     return FirebaseFirestore.instance
-    .collection('vaults')
-    .add(<String, dynamic> {
+        .collection('vaults')
+        .add(<String, dynamic>{
       'name': item.name,
       'uid': currentUser!.uid,
       'items': []
