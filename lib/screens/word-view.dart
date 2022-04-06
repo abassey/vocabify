@@ -7,14 +7,6 @@ class WordView extends StatelessWidget {
   final List<String> syns = ["Pepsi", "Coke", "Another Word"];
   final DictItem word;
 
-  Widget _buildRow(item) {
-    for (var def in item) {
-      return ListTile(
-        title: Text(def.definition),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     //this needs to be added at the top of the page, but not under appbar or floating action button
@@ -115,7 +107,11 @@ class WordView extends StatelessWidget {
                                 final item = word.meanings[index].definitions;
                                 print(item);
 
-                                return _buildRow(item);
+                                for (Definitions def in item) {
+                                  return ListTile(
+                                    title: Text(def.definition),
+                                  );
+                                }
                               },
                             ),
                             const Text(
