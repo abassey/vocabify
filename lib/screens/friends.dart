@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../data/friendsdata.dart';
+import 'package:provider/provider.dart';
+import 'package:vocabify/screens/add-friends.dart';
+import '../providers/app_provider.dart';
 import 'friend-account.dart';
 import 'dart:math';
 
@@ -11,11 +13,16 @@ class FriendsListScreen extends StatefulWidget {
 }
 
 class _FriendsListScreenState extends State<FriendsListScreen> {
+
   bool _isEditMode = false;
   double iconSize = 20;
+  List<String> friendsList = [];
 
   @override
   Widget build(BuildContext context) {
+
+    friendsList = Provider.of<AppProvider>(context).currentFriends;
+
     return Scaffold(
       appBar: friendsBar(),
       body: friendsListView(),
@@ -53,9 +60,12 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
                     ? const Icon(Icons.search)
                     : const Icon(Icons.close))),
         //temporarily a popup button until add friend functionality is added
-        PopupMenuButton(
+        IconButton(
             icon: const Icon(Icons.person_add_alt_1_rounded),
-            itemBuilder: (context) => const []),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const AddFriends()));
+            }
+        ),
       ],
     );
   }
@@ -84,11 +94,11 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
     int randomNumber = random.nextInt(500);
 
     return ListTile(
-      leading: Text(friend["name"],
+      leading: Text(friend,
           textScaleFactor: 1.6,
           style: const TextStyle(fontWeight: FontWeight.bold)),
-      title: Text(
-        friend["gamesWon"] + " games won",
+      title: const Text( //this will not be const when we add games back in
+        "0 games won",
         textScaleFactor: 1.3,
         textAlign: TextAlign.right,
       ),
@@ -97,7 +107,7 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => FriendsAccount(
-                      name: friend["name"],
+                      name: friend,
                       wordsLearned: randomNumber,
                     )));
       },

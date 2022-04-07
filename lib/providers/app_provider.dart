@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import '../data/vault.dart';
 import '../screens/vault-view.dart';
 
 class AppProvider extends ChangeNotifier {
+
   ApplicationLoginState _loginState = ApplicationLoginState.emailAddress;
   ApplicationLoginState get loginState => _loginState;
   String? _email;
@@ -47,8 +49,12 @@ class AppProvider extends ChangeNotifier {
   List<Vault> _vaults = [];
   List<Vault> get vaults => _vaults;
   User? currentUser;
+  List<String> currentFriends = [];
+
+  //constructor
   AppProvider() {
     init();
+    getFriendsList();
   }
 
   void initVaultItems() {
@@ -77,6 +83,7 @@ class AppProvider extends ChangeNotifier {
   }
 
   Future<void> init() async {
+
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
@@ -186,6 +193,7 @@ class AppProvider extends ChangeNotifier {
         email: email,
         password: password,
       );
+      getFriendsList();
       _displayName = currentUser?.displayName;
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
@@ -216,13 +224,13 @@ class AppProvider extends ChangeNotifier {
   void signOut() {
     _loginState = ApplicationLoginState.emailAddress;
     currentUser = null;
+    currentFriends = [];
     FirebaseAuth.instance.signOut();
     notifyListeners();
   }
 
   // Interacting with the FireStore vaults
-  Future<DocumentReference> addVaultToFireStore(
-      Vault item, BuildContext context) {
+  Future<DocumentReference> addVaultToFireStore(Vault item, BuildContext context) {
     addGridChild(item.name, context);
     return FirebaseFirestore.instance
         .collection('vaults')
@@ -233,11 +241,14 @@ class AppProvider extends ChangeNotifier {
     });
   }
 
-  //Creating user collection
-  Future<DocumentReference> addUserToFireStore() async {
+  // FUNCTIONS FOR ADDING FRIENDS -------------------------------------------
+
+  //Creating user collection if this fails change back to DocumentReference
+  Future<void> addUserToFireStore() {
     return FirebaseFirestore.instance
       .collection('users')
-      .add(<String, dynamic>{
+      .doc(currentUser!.uid)
+      .set(<String, dynamic>{
         'name': currentUser!.displayName,
         'email':currentUser!.email,
         'uid': currentUser!.uid,
@@ -245,4 +256,52 @@ class AppProvider extends ChangeNotifier {
       });
   }
 
+  //get a user from thr user collection
+  Future<void> updateFriendList(String friendEmail){
+    return FirebaseFirestore.instance
+    .collection('users')
+    .get()
+    .then((QuerySnapshot querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+        if (friendEmail == doc["email"] && friendEmail != currentUser!.email){
+          listUpdater(doc["name"]);
+        }
+      }
+    });
+  }
+
+  //update user collection with new friends
+  Future<void> listUpdater (String friend) async{
+    List<String> friendList = [friend];
+    await FirebaseFirestore.instance
+      .collection('users')
+      .doc(currentUser!.uid)
+      .update({'friends': FieldValue.arrayUnion(friendList)});
+    currentFriends.add(friend);
+    notifyListeners();
+  }
+
+  //get the users friends
+  //NOTE THESE PROB DONT HAVE TO BE AWAIT
+  Future<void> getFriendsList () async{
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    if(currentUser == null) return;
+
+    await FirebaseFirestore.instance
+      .collection('users')
+      .doc(currentUser!.uid)
+      .get()
+      .then((DocumentSnapshot doc){
+        if(doc.exists) {
+          currentFriends = [];
+          for(var i in doc['friends']){
+            currentFriends.add(i as String);
+          }
+        }
+      });
+    notifyListeners();
+  }
 }
