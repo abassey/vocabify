@@ -263,7 +263,7 @@ class AppProvider extends ChangeNotifier {
     .get()
     .then((QuerySnapshot querySnapshot) {
       for (var doc in querySnapshot.docs) {
-        if (friendEmail == doc["email"]){
+        if (friendEmail == doc["email"] && friendEmail != currentUser!.email){
           listUpdater(doc["name"]);
         }
       }
