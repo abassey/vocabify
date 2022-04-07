@@ -9,7 +9,7 @@ class Header extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Text(
           heading,
-          style: const TextStyle(fontSize: 24),
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       );
 }

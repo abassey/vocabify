@@ -37,7 +37,7 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
         children: [
           _isEditMode
               ? const TextBoxSearch()
-              : const Text("Friends", textAlign: TextAlign.start),
+              : const Text("Friends", textAlign: TextAlign.start, style: TextStyle(fontSize: 23)),
         ],
         mainAxisSize: MainAxisSize.min,
       ),

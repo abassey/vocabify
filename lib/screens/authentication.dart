@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../providers/app_provider.dart';
 import '../widgets.dart';
 
 enum ApplicationLoginState {
@@ -167,6 +164,7 @@ class _EmailFormState extends State<EmailForm> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        const SizedBox(height: 10),
         const Header('Sign in with email'),
         Padding(
           padding: const EdgeInsets.all(8.0),

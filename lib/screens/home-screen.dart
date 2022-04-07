@@ -3,7 +3,6 @@ import 'vault-view.dart';
 import 'package:vocabify/data/vault.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
-import 'authentication.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -72,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           title: const Text(
             "Vocabify",
-            style: TextStyle(fontSize: 30),
+            style: TextStyle(fontSize: 23),
           ),
         ),
         body: Center(
