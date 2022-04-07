@@ -4,9 +4,6 @@ import 'account-view.dart';
 import 'friends.dart';
 import 'game-view.dart';
 import 'home-screen.dart';
-import 'authentication.dart';
-import 'package:provider/provider.dart';
-import '../providers/app_provider.dart';
 
 
 class AppNavigation extends StatefulWidget {

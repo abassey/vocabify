@@ -1,10 +1,6 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vocabify/firebase_options.dart';
-import 'providers/app_provider.dart';
 import 'screens/app_navigation.dart';
-import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import './screens/authentication.dart';
 
@@ -31,17 +27,31 @@ class MyApp extends StatelessWidget {
         ),
         home: Consumer<AppProvider>(builder: (context, appState, _) => appState.loginState != ApplicationLoginState.loggedIn ? 
         Scaffold(
-          appBar: AppBar(title: const Text("Vocabify")),
+          appBar: AppBar(title: const Text("Vocabify", style: TextStyle(fontSize: 25))),
           body: Center(
-          child: Authentication(
-            email: appState.email,
-            loginState: appState.loginState,
-            startLoginFlow: appState.startLoginFlow,
-            verifyEmail: appState.verifyEmail,
-            signInWithEmailAndPassword: appState.signInWithEmailAndPassword,
-            cancelRegistration: appState.cancelRegistration,
-            registerAccount: appState.registerAccount,
-            signOut: appState.signOut),
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text('Login or create an account to save and learn your favorite words',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Authentication(
+                email: appState.email,
+                loginState: appState.loginState,
+                startLoginFlow: appState.startLoginFlow,
+                verifyEmail: appState.verifyEmail,
+                signInWithEmailAndPassword: appState.signInWithEmailAndPassword,
+                cancelRegistration: appState.cancelRegistration,
+                registerAccount: appState.registerAccount,
+                signOut: appState.signOut
+              ),
+            ],
+          ),
         ))
         : const AppNavigation()
       ),

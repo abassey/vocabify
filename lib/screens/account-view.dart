@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
-import 'authentication.dart';
 
 class AccountView extends StatefulWidget {
   const AccountView({Key? key}) : super(key: key);
@@ -22,12 +21,14 @@ class _AccountViewState extends State<AccountView> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(appProvider.name != null ? appProvider.name! : "Profile"),
+          title: Text(appProvider.name != null ? appProvider.name! : "Profile", style: const TextStyle(fontSize: 23)),
           actions: [
+            const Center(child:Text('Logout',  style: TextStyle(fontSize: 18))),
             IconButton(
                 onPressed: () =>
                     appProvider.signOut(),
-                icon: const Icon(Icons.logout))
+                icon: const Icon(Icons.logout)
+            )
           ],
         ),
         body: ListView(
