@@ -197,7 +197,7 @@ class _EmailFormState extends State<EmailForm> {
                       child: StyledButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            widget.callback(_controller.text);
+                            widget.callback(_controller.text.trim());
                           }
                         },
                         child: const Text('NEXT'),
