@@ -55,6 +55,13 @@ class _VaultViewState extends State<VaultView> {
     super.dispose();
   }
 
+  int getVaultItemCount() {
+    return widget.vault.vaultitems.length +
+            (widget.vault.vaultitems.length - 1 < 0
+                ? 0
+                : widget.vault.vaultitems.length - 1);
+  }
+
   @override
   Widget build(BuildContext context) {
     final vault_provider = Provider.of<VaultProvider>(context);
@@ -66,10 +73,7 @@ class _VaultViewState extends State<VaultView> {
           final word = await openDialog();
           if (word == null || word.isEmpty) return;
           DictItem toAdd = await HttpGet(word: word).loadDictItem();
-          setState(() {
-           // VaultHandlerAPI(vault: widget.vault).addWordtoVault(toAdd, widget.vaultIndex);
-            app_provider.addVaultItems(widget.vaultIndex, toAdd);
-          });
+          app_provider.addVaultItems(widget.vaultIndex, toAdd);
         },
       ),
       appBar: AppBar(
@@ -130,13 +134,10 @@ class _VaultViewState extends State<VaultView> {
         ],
       ),
       body: ListView.builder(
-        itemCount: widget.vault.vaultitems.length +
-            (widget.vault.vaultitems.length - 1 < 0
-                ? 0
-                : widget.vault.vaultitems.length - 1),
+        itemCount: getVaultItemCount(),
         itemBuilder: (context, i) {
           var index = (i ~/ 2);
-          if (i.isOdd || index >= widget.vault.vaultitems.length) {
+          if (i.isOdd || index >= getVaultItemCount()) {
             return const Padding(
               padding: EdgeInsets.symmetric(horizontal: 7.0),
               child: Divider(

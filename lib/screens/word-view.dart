@@ -109,16 +109,20 @@ class WordView extends StatelessWidget {
                                       fontStyle: FontStyle.italic,
                                       fontWeight: FontWeight.w500)),
                               const Padding(padding: EdgeInsets.all(4)),
-                              Row(children: [
-                                for (var syn in word.synonyms)
-                                  Padding(
-                                      padding: const EdgeInsets.all(4),
-                                      child: Card(
-                                          color: Colors.lightBlue,
-                                          child: Padding(
-                                              padding: const EdgeInsets.all(10),
-                                              child: Text(syn))))
-                              ]),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  for (var syn in word.synonyms)
+                                    Padding(
+                                        padding: const EdgeInsets.all(4),
+                                        child: Card(
+                                            color: Colors.grey,
+                                            child: Padding(
+                                                padding: const EdgeInsets.all(10),
+                                                child: Text(syn))))
+                                ],
+                              ),
                             
                             const Padding(padding: EdgeInsets.all(8.0))
                             ])),
