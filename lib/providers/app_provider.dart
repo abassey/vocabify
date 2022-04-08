@@ -49,7 +49,7 @@ class AppProvider extends ChangeNotifier {
   List<Vault> _vaults = [];
   List<Vault> get vaults => _vaults;
   User? currentUser;
-  List<String> currentFriends = [];
+  List<dynamic> currentFriends = [];
 
   //constructor
   AppProvider() {
@@ -230,18 +230,19 @@ class AppProvider extends ChangeNotifier {
   }
 
   // Interacting with the FireStore vaults
-  Future<DocumentReference> addVaultToFireStore(Vault item, BuildContext context) {
+  Future<void> addVaultToFireStore(Vault item, BuildContext context) {
     addGridChild(item.name, context);
     return FirebaseFirestore.instance
         .collection('vaults')
-        .add(<String, dynamic>{
-      'name': item.name,
-      'uid': currentUser!.uid,
-      'items': []
-    });
+        .doc(currentUser!.uid)
+        .set(<String, dynamic>{
+          'name': item.name,
+          'uid': currentUser!.uid,
+          'items': []
+        });
   }
 
-  // FUNCTIONS FOR ADDING FRIENDS -------------------------------------------
+  // FUNCTIONS FOR ADDING FRIENDS -------------------------------------------*
 
   //Creating user collection if this fails change back to DocumentReference
   Future<void> addUserToFireStore() {
@@ -253,6 +254,7 @@ class AppProvider extends ChangeNotifier {
         'email':currentUser!.email,
         'uid': currentUser!.uid,
         'friends': [],
+        'sharedVaults': []
       });
   }
 
@@ -264,7 +266,7 @@ class AppProvider extends ChangeNotifier {
     .then((QuerySnapshot querySnapshot) async {
       for (var doc in querySnapshot.docs){
         if (friendEmail == doc["email"] && friendEmail != currentUser!.email){
-          await listUpdater(doc["name"]);
+          await listUpdater(doc["name"], doc["uid"]);
           return;
         }
       }
@@ -274,13 +276,14 @@ class AppProvider extends ChangeNotifier {
   }
 
   //update user collection with new friends
-  Future<void> listUpdater (String friend) async{
-    List<String> friendList = [friend];
+  Future<void> listUpdater (String name, String uid) async{
+    var obj = {"name": name, "uid": uid};
+    List<dynamic> friendList = [obj];
     await FirebaseFirestore.instance
       .collection('users')
       .doc(currentUser!.uid)
       .update({'friends': FieldValue.arrayUnion(friendList)});
-    currentFriends.add(friend);
+    currentFriends.add(obj);
     addFriend = true;
     notifyListeners();
   }
@@ -301,10 +304,44 @@ class AppProvider extends ChangeNotifier {
         if(doc.exists) {
           currentFriends = [];
           for(var i in doc['friends']){
-            currentFriends.add(i as String);
+            currentFriends.add({"name":i["name"] as String, "uid":i["uid"] as String});
           }
         }
       });
     notifyListeners();
+  }
+
+  // FUNCTIONS FOR SHARING VAULTS -------------------------------------------*
+
+  //Add a shared vault for the user
+  Future<void> updateSharedVaults (String vaultUid, String sharedUserUid) async{
+    var sharedVault = {"vault":vaultUid, "shared":sharedUserUid};
+    List<dynamic> sharedVaultsList = [sharedVault];
+    await FirebaseFirestore.instance
+      .collection('users')
+      .doc(currentUser!.uid)
+      .update({'shared': FieldValue.arrayUnion(sharedVaultsList)});
+    notifyListeners();
+  }
+
+  //todo: update friends.dart to be a map
+
+  Future<void> shareVaults() async {
+
+    /*
+      - Step 1: if a user clicks on the share button inside of a vault
+      - find the vault they are working in (maybe change vaults id to uid)
+      - find who it belongs to, have user choose friend to share
+
+      - step 2: add to firestore shared vault collectiton
+      - Grabs vault and user name adds to firestore
+      - Add to users: -> currentUser: shared vaults: "vault": x, "friend": sharedUser
+                      -> shared user: shared vaults: "vault": x, "friend": currentUser
+      
+      - step 3: Grab vault object for each and display it on profile
+      - Look in homescreen to see how we visit a specific vault
+      - notifylisteners();
+     */
+
   }
 }
