@@ -98,8 +98,8 @@ class _VaultViewState extends State<VaultView> {
                       : const Icon(Icons.close))),
           PopupMenuButton(
               icon: const Icon(Icons.more_vert),
-              itemBuilder: (context) => const [
-                    PopupMenuItem(
+              itemBuilder: (context) => [
+                    const PopupMenuItem(
                       child: ListTile(
                         leading: Icon(Icons.edit),
                         title: Text("Edit"),
@@ -107,11 +107,16 @@ class _VaultViewState extends State<VaultView> {
                       value: 1,
                     ),
                     PopupMenuItem(
-                      child: ListTile(
+                      child: const ListTile(
                         leading: Icon(Icons.share),
                         title: Text("Share"),
                       ),
                       value: 2,
+                      onTap: () {
+                        //show a popup dialog with friends listed
+                        //Here we show the list of the users friends and pick one,
+                        //Save this to the 
+                      },
                     )
                   ]),
         ],

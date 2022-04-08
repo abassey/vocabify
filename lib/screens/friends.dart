@@ -16,7 +16,7 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
 
   bool _isEditMode = false;
   double iconSize = 20;
-  List<String> friendsList = [];
+  List<dynamic> friendsList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +94,7 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
     int randomNumber = random.nextInt(500);
 
     return ListTile(
-      leading: Text(friend,
+      leading: Text(friend["name"],
           textScaleFactor: 1.6,
           style: const TextStyle(fontWeight: FontWeight.bold)),
       title: const Text( //this will not be const when we add games back in
@@ -107,7 +107,7 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => FriendsAccount(
-                      name: friend,
+                      name: friend["name"],
                       wordsLearned: randomNumber,
                     )));
       },
