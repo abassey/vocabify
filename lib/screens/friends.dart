@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../data/friendsdata.dart';
+import 'package:provider/provider.dart';
+import 'package:vocabify/screens/add-friends.dart';
+import '../providers/app_provider.dart';
 import 'friend-account.dart';
 import 'dart:math';
 
@@ -11,11 +13,16 @@ class FriendsListScreen extends StatefulWidget {
 }
 
 class _FriendsListScreenState extends State<FriendsListScreen> {
+
   bool _isEditMode = false;
   double iconSize = 20;
+  List<dynamic> friendsList = [];
 
   @override
   Widget build(BuildContext context) {
+
+    friendsList = Provider.of<AppProvider>(context).currentFriends;
+
     return Scaffold(
       appBar: friendsBar(),
       body: friendsListView(),
@@ -30,7 +37,7 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
         children: [
           _isEditMode
               ? const TextBoxSearch()
-              : const Text("Friends", textAlign: TextAlign.start),
+              : const Text("Friends", textAlign: TextAlign.start, style: TextStyle(fontSize: 23)),
         ],
         mainAxisSize: MainAxisSize.min,
       ),
@@ -53,9 +60,12 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
                     ? const Icon(Icons.search)
                     : const Icon(Icons.close))),
         //temporarily a popup button until add friend functionality is added
-        PopupMenuButton(
+        IconButton(
             icon: const Icon(Icons.person_add_alt_1_rounded),
-            itemBuilder: (context) => const []),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const AddFriends()));
+            }
+        ),
       ],
     );
   }
@@ -87,8 +97,8 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
       leading: Text(friend["name"],
           textScaleFactor: 1.6,
           style: const TextStyle(fontWeight: FontWeight.bold)),
-      title: Text(
-        friend["gamesWon"] + " games won",
+      title: const Text( //this will not be const when we add games back in
+        "0 games won",
         textScaleFactor: 1.3,
         textAlign: TextAlign.right,
       ),

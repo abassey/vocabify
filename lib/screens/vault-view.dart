@@ -1,43 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:vocabify/data/dictapi.dart';
+import 'package:vocabify/data/httpget.dart';
+import 'package:vocabify/data/vault.dart';
+import 'package:vocabify/data/vaulthandling.dart';
 import 'word-view.dart';
 import 'package:provider/provider.dart';
 import '../providers/vault_provider.dart';
 import '../data/vault.dart';
 import '../data/dictapi.dart';
 
-enum WordTypes { noun, adj }
-
-List _vaultItems = [
-  {
-    "word": "some word",
-    "pronounce": "This is some part",
-    "word_type": "Noun",
-    "word_desc":
-        "This is some word that is pretty cool! You can read some info about the word and learn something new.",
-    "word_syns": ["Pepsi", "Coke", "Ice Cream", "Mario"]
-  },
-  {
-    "word": "some word",
-    "pronounce": "This is some part",
-    "word_type": "Noun",
-    "word_desc":
-        "This is some word that is pretty cool! You can read some info about the word and learn something new.",
-    "word_syns": ["Pepsi", "Coke", "Ice Cream", "Mario"]
-  },
-  {
-    "word": "some word",
-    "pronounce": "This is some part",
-    "word_type": "Noun",
-    "word_desc":
-        "This is some word that is pretty cool! You can read some info about the word and learn something new.",
-    "word_syns": ["Pepsi", "Coke", "Ice Cream", "Mario"]
-  },
-];
-
 class VaultView extends StatefulWidget {
-  VaultView({Key? key, required this.vaultTitle, required this.vaultItems}) : super(key: key);
-  final String vaultTitle;
-  List<dynamic> vaultItems;
+  const VaultView({Key? key, required this.vault}) : super(key: key);
+  final Vault vault;
+
   @override
   _VaultViewState createState() => _VaultViewState();
 }
@@ -50,25 +25,31 @@ class _VaultViewState extends State<VaultView> {
   Widget _buildRow(index) {
     return ListTile(
       title: Text(
-        Provider.of<VaultProvider>(context).vaultItems[index]["word"]
+        widget.vault.vaultitems[index].word,
+        style: const TextStyle(fontSize: 20),
       ),
+      trailing: const Icon(Icons.arrow_forward_ios),
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => WordView(word: Provider.of<VaultProvider>(context).vaultItems[index]["word"])));
+            context,
+            MaterialPageRoute(
+                builder: (context) => WordView(
+                    word: widget.vault.vaultitems[
+                        index]))); //this should change to dicttime to get the list of meanings and phonetics
       },
     );
   }
 
   //TextEditing Controller fucntions
   @override
-  void initState(){
+  void initState() {
     super.initState();
     Provider.of<VaultProvider>(context).initVaultItems(widget.vaultItems);
     controller = TextEditingController();
   }
 
   @override
-  void dispose(){
+  void dispose() {
     controller.dispose();
     super.dispose();
   }
@@ -82,7 +63,11 @@ class _VaultViewState extends State<VaultView> {
         onPressed: () async {
           final word = await openDialog();
           if (word == null || word.isEmpty) return;
-          vault_provider.addToVault(DictItem(word: word, definitions: ["test", "another def", "done"], synonyms: ["Pepsi", "coke"]));
+          DictItem toAdd = await HttpGet(word: word).loadDictItem();
+          setState(() {
+            VaultHandlerAPI(vault: widget.vault).addWordtoVault(toAdd);
+            print(toAdd);
+          });
         },
       ),
       appBar: AppBar(
@@ -92,7 +77,11 @@ class _VaultViewState extends State<VaultView> {
             children: [
               _isEditMode
                   ? const TextBoxSearch()
-                  : Text(widget.vaultTitle, textAlign: TextAlign.start),
+                  : Text(
+                      widget.vault.name,
+                      textAlign: TextAlign.start,
+                      style: const TextStyle(fontSize: 25),
+                    ),
             ],
             mainAxisSize: MainAxisSize.min),
         centerTitle: false,
@@ -115,8 +104,8 @@ class _VaultViewState extends State<VaultView> {
                       : const Icon(Icons.close))),
           PopupMenuButton(
               icon: const Icon(Icons.more_vert),
-              itemBuilder: (context) => const [
-                    PopupMenuItem(
+              itemBuilder: (context) => [
+                    const PopupMenuItem(
                       child: ListTile(
                         leading: Icon(Icons.edit),
                         title: Text("Edit"),
@@ -124,20 +113,28 @@ class _VaultViewState extends State<VaultView> {
                       value: 1,
                     ),
                     PopupMenuItem(
-                      child: ListTile(
+                      child: const ListTile(
                         leading: Icon(Icons.share),
                         title: Text("Share"),
                       ),
                       value: 2,
+                      onTap: () {
+                        //show a popup dialog with friends listed
+                        //Here we show the list of the users friends and pick one,
+                        //Save this to the 
+                      },
                     )
                   ]),
         ],
       ),
       body: ListView.builder(
-        itemCount: vault_provider.vaultItems.length + (vault_provider.vaultItems.length - 1 < 0 ? 0 : vault_provider.vaultItems.length - 1),
+        itemCount: widget.vault.vaultitems.length +
+            (widget.vault.vaultitems.length - 1 < 0
+                ? 0
+                : widget.vault.vaultitems.length - 1),
         itemBuilder: (context, i) {
           var index = (i ~/ 2);
-          if (i.isOdd || index >= vault_provider.vaultItems.length) {
+          if (i.isOdd || index >= widget.vault.vaultitems.length) {
             return const Padding(
               padding: EdgeInsets.symmetric(horizontal: 7.0),
               child: Divider(
@@ -154,27 +151,24 @@ class _VaultViewState extends State<VaultView> {
   }
 
   Future<String?> openDialog() => showDialog<String>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text('Add Word'),
-      content: TextField(
-        controller: controller,
-        autofocus: true,
-        decoration: const InputDecoration(hintText: 'Enter your word'),
-      ),
-      actions: [
-        TextButton(
-          child: const Text('ADD'),
-          onPressed: () {
-            Navigator.of(context).pop(controller.text);
-            controller.clear();
-          },
-        )
-      ]
-    ),
-  );
-
-
+        context: context,
+        builder: (context) => AlertDialog(
+            title: const Text('Add Word'),
+            content: TextField(
+              controller: controller,
+              autofocus: true,
+              decoration: const InputDecoration(hintText: 'Enter your word'),
+            ),
+            actions: [
+              TextButton(
+                child: const Text('ADD'),
+                onPressed: () {
+                  Navigator.of(context).pop(controller.text);
+                  controller.clear();
+                },
+              )
+            ]),
+      );
 }
 
 class TextBoxSearch extends StatelessWidget {
