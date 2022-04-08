@@ -324,8 +324,6 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  //todo: update friends.dart to be a map
-
   Future<void> shareVaults() async {
 
     /*
