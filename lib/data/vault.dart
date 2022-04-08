@@ -11,7 +11,7 @@ class Vault {
   });
 
   late String name;
-  late List<dynamic> vaultitems;
+  late List<DictItem> vaultitems;
   
   late List<User> fbusers;
 

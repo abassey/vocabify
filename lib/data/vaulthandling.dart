@@ -12,7 +12,7 @@ class VaultHandlerAPI {
   late Vault vault;
 
   //Handle the addition of a word to the vault in the database
-  void addWordtoVault(DictItem word){
+  void addWordtoVault(DictItem word, int vaultIndex){
     if(this.vault != null){
       vault.addDictItem(word);
       // Add the word to the vault database

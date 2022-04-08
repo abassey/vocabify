@@ -101,8 +101,11 @@ class AppProvider extends ChangeNotifier {
           _vaults = [];
           initVaultItems();
           for (final document in snapshot.docs) {
+            List<DictItem> items = (document['items'] as List<dynamic>).map((item) =>  
+                DictItem(word: item['word'], definitions: (item['definitions'] as List<dynamic>).map((e) => e.toString()).toList(),
+                synonyms: (item['synonyms'] as List<dynamic>).map((e) => e.toString()).toList())).toList();
             _vaults.add(Vault(
-                name: document['name'] as String, vaultitems: [], fbusers: []));
+                name: document['name'] as String, vaultitems: items, fbusers: []));
             _vaultItems.add(
               Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -141,6 +144,13 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addVaultItems(int index, DictItem vaultItem) {
+    _vaults[index].vaultitems.add(vaultItem);
+    // save this vault!
+    updateFireStoreVaultItem(_vaults[index]);
+    notifyListeners();
+  }
+
   void addGridChild(String vaultName, BuildContext context) {
     _vaults.add(Vault(name: vaultName, vaultitems: [], fbusers: []));
     _vaultItems.add(Padding(
@@ -149,7 +159,7 @@ class AppProvider extends ChangeNotifier {
         onTap: () {
           Vault vault = Vault(name: vaultName, vaultitems: [], fbusers: []);
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => VaultView(vault: vault)));
+              MaterialPageRoute(builder: (context) => VaultView(vault: vault, vaultIndex: _vaultItems.length + 1)));
         },
         child: Container(
           width: 30.0,
@@ -232,7 +242,6 @@ class AppProvider extends ChangeNotifier {
   // Interacting with the FireStore vaults
   Future<void> addVaultToFireStore(Vault item, BuildContext context) {
     addGridChild(item.name, context);
-    List<dynamic> vault_items = item.vaultitems;
     return FirebaseFirestore.instance
         .collection('vaults')
         .doc(currentUser!.uid)
@@ -240,6 +249,30 @@ class AppProvider extends ChangeNotifier {
           'name': item.name,
           'uid': currentUser!.uid,
           'items': []
+        });
+  }
+
+  dynamic createSavableWordList(Vault vault) {
+    List<dynamic> result = [];
+    for (int i = 0;i<vault.vaultitems.length;i++) {
+      result.add({
+        'word': vault.vaultitems[i].word,
+        'definitions': vault.vaultitems[i].definitions,
+        'synonyms': vault.vaultitems[i].synonyms
+      });
+    }
+    return result;
+  }
+
+  Future<void> updateFireStoreVaultItem(Vault vault) {
+    List<dynamic> saveList = createSavableWordList(vault);
+    return FirebaseFirestore.instance
+        .collection('vaults')
+        .doc(currentUser!.uid)
+        .set(<String, dynamic>{
+          'name': vault.name,
+          'uid': currentUser!.uid,
+          'items': saveList
         });
   }
 

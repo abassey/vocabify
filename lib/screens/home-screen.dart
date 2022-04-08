@@ -60,8 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
           context,
           MaterialPageRoute(
               builder: (context) => VaultView(
-                  vault: Provider.of<AppProvider>(context, listen: false)
-                      .vaults[index - 1])));
+                  vault: Provider.of<AppProvider>(context)
+                      .vaults[index - 1], vaultIndex: index-1)));
     }
   }
 
@@ -88,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       MaterialPageRoute(
                           builder: (context) => VaultView(
                               vault:
-                                  coreVault))); //add provider of to this line ot save the words in this vault
+                                  coreVault, vaultIndex: -1))); //add provider of to this line ot save the words in this vault
                 },
                 child: Container(
                   width: 500,
