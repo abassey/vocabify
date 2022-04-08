@@ -89,7 +89,7 @@ class _FriendsAccountState extends State<FriendsAccount> {
       onTap: () {
         Vault vault = Vault(name: "Vault View", vaultitems: [], fbusers: []);
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => VaultView(vault: vault)));
+            MaterialPageRoute(builder: (context) => VaultView(vault: vault, vaultIndex: -1)));
       },
       child: Container(
           margin: const EdgeInsets.all(10.0),

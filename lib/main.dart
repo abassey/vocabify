@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'screens/app_navigation.dart';
 import '../providers/app_provider.dart';
 import './screens/authentication.dart';
+import '../providers/vault_provider.dart';
 
 void main(){
   runApp(const MyApp());
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => AppProvider(),
         ),
+        ChangeNotifierProvider(create: (context) => VaultProvider())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

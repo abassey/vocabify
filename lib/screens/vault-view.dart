@@ -4,10 +4,16 @@ import 'package:vocabify/data/httpget.dart';
 import 'package:vocabify/data/vault.dart';
 import 'package:vocabify/data/vaulthandling.dart';
 import 'word-view.dart';
+import 'package:provider/provider.dart';
+import '../providers/vault_provider.dart';
+import '../providers/app_provider.dart';
+import '../data/vault.dart';
+import '../data/dictapi.dart';
 
 class VaultView extends StatefulWidget {
-  const VaultView({Key? key, required this.vault}) : super(key: key);
+  const VaultView({Key? key, required this.vault, required this.vaultIndex}) : super(key: key);
   final Vault vault;
+  final int vaultIndex;
 
   @override
   _VaultViewState createState() => _VaultViewState();
@@ -51,6 +57,8 @@ class _VaultViewState extends State<VaultView> {
 
   @override
   Widget build(BuildContext context) {
+    final vault_provider = Provider.of<VaultProvider>(context);
+    final app_provider = Provider.of<AppProvider>(context);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
@@ -59,8 +67,8 @@ class _VaultViewState extends State<VaultView> {
           if (word == null || word.isEmpty) return;
           DictItem toAdd = await HttpGet(word: word).loadDictItem();
           setState(() {
-            VaultHandlerAPI(vault: widget.vault).addWordtoVault(toAdd);
-            print(toAdd);
+           // VaultHandlerAPI(vault: widget.vault).addWordtoVault(toAdd, widget.vaultIndex);
+            app_provider.addVaultItems(widget.vaultIndex, toAdd);
           });
         },
       ),

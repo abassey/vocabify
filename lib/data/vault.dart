@@ -11,7 +11,7 @@ class Vault {
   });
 
   late String name;
-  late List<dynamic> vaultitems;
+  late List<DictItem> vaultitems;
   
   late List<User> fbusers;
 
@@ -41,7 +41,7 @@ class Vault {
 
   DictItem? findWord(String word){
     word = word.toLowerCase();
-    DictItem ret = DictItem(word: "", phonetics: [], meanings: []);
+    DictItem ret = DictItem(word: "", definitions: [], synonyms: []);
     vaultitems.forEach((element) {
       if (element.word == word) {
         ret = element;
