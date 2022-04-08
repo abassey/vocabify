@@ -20,8 +20,7 @@ class _AddFriendsState extends State<AddFriends> {
 
   final addFriendController = TextEditingController();
   final formKey = GlobalKey<FormState>();
-  String message = '';
-  bool colour = true;
+  bool clicked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -70,17 +69,20 @@ class _AddFriendsState extends State<AddFriends> {
           const SizedBox(height:10),
           ElevatedButton(
             child: const Text('Add to Friends List', style: TextStyle(fontSize: 18)),
-            onPressed: () {
+            onPressed: () async{
               if (formKey.currentState!.validate()) {
-                appProvider.updateFriendList(addFriendController.text.toLowerCase().trim());
+                await appProvider.updateFriendList(addFriendController.text.toLowerCase().trim());
+                if(appProvider.addFriend){
+                  const snackbar = SnackBar(content: Text('Added Friend'));
+                  ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                }
               }
               addFriendController.clear();
             },
           ),
           const SizedBox(height: 10),
-          (colour) 
-            ? Text(message, style: const TextStyle(fontSize: 18, color: Colors.green))
-            : Text(message, style: const TextStyle(fontSize: 18, color: Colors.red))
+          if (appProvider.addFriend == false)
+            const Text('Could not find user', style: TextStyle(fontSize: 18, color: Colors.red))
         ],
       )
     );

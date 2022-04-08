@@ -19,6 +19,7 @@ class AppProvider extends ChangeNotifier {
   String? get email => _email;
   String? _displayName;
   String? get name => _displayName;
+  bool addFriend = false;
 
   StreamSubscription<QuerySnapshot>? _vaultItemSubscription;
   List<Widget> _vaultItems = [
@@ -256,16 +257,19 @@ class AppProvider extends ChangeNotifier {
   }
 
   //get a user from thr user collection
-  Future<void> updateFriendList(String friendEmail){
-    return FirebaseFirestore.instance
+  Future<void> updateFriendList(String friendEmail) async{
+    await FirebaseFirestore.instance
     .collection('users')
     .get()
-    .then((QuerySnapshot querySnapshot) {
-      for (var doc in querySnapshot.docs) {
+    .then((QuerySnapshot querySnapshot) async {
+      for (var doc in querySnapshot.docs){
         if (friendEmail == doc["email"] && friendEmail != currentUser!.email){
-          listUpdater(doc["name"]);
+          await listUpdater(doc["name"]);
+          return;
         }
       }
+      addFriend = false;
+      notifyListeners();
     });
   }
 
@@ -277,11 +281,11 @@ class AppProvider extends ChangeNotifier {
       .doc(currentUser!.uid)
       .update({'friends': FieldValue.arrayUnion(friendList)});
     currentFriends.add(friend);
+    addFriend = true;
     notifyListeners();
   }
 
   //get the users friends
-  //NOTE THESE PROB DONT HAVE TO BE AWAIT
   Future<void> getFriendsList () async{
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
