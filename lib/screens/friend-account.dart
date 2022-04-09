@@ -87,7 +87,7 @@ class _FriendsAccountState extends State<FriendsAccount> {
   Widget buildVault() {
     return GestureDetector(
       onTap: () {
-        Vault vault = Vault(name: "Vault View", vaultitems: [], fbusers: []);
+        Vault vault = Vault(uid:'', name: "Vault View", vaultitems: [], fbusers: []);
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => VaultView(vault: vault, vaultIndex: -1)));
       },

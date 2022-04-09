@@ -8,12 +8,13 @@ class Vault {
     required this.name,
     required this.vaultitems,
     required this.fbusers,
+    required this.uid,
   });
 
   late String name;
   late List<DictItem> vaultitems;
-  
   late List<User> fbusers;
+  late String uid;
 
   //Add a user to the vault
   void addUser(user){
