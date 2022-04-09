@@ -145,9 +145,11 @@ class AppProvider extends ChangeNotifier {
   }
 
   void addVaultItems(int index, DictItem vaultItem) {
-    _vaults[index].vaultitems.add(vaultItem);
-    // save this vault!
-    updateFireStoreVaultItem(_vaults[index]);
+    if (index != -1) {
+      _vaults[index].vaultitems.add(vaultItem);
+      // save this vault!
+      updateFireStoreVaultItem(_vaults[index]);
+    }
     notifyListeners();
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vocabify/data/dictapi.dart';
 import 'vault-view.dart';
 import 'package:vocabify/data/vault.dart';
 import 'package:provider/provider.dart';
@@ -67,6 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final app_provider = Provider.of<AppProvider>(context);
     return Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -81,8 +83,14 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.all(10.0),
               child: GestureDetector(
                 onTap: () {
+                  List<DictItem> coreVaultItems = [];
+                  for (var vault in app_provider.vaults) {
+                    for (var item in vault.vaultitems) {
+                      coreVaultItems.add(item);
+                    }
+                  }
                   Vault coreVault =
-                      Vault(name: "All Words", vaultitems: [], fbusers: []);
+                      Vault(name: "All Words", vaultitems: coreVaultItems, fbusers: []);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
