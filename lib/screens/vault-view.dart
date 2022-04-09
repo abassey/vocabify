@@ -23,6 +23,7 @@ class _VaultViewState extends State<VaultView> {
   late TextEditingController controller;
   bool _isEditMode = false;
   double iconSize = 20;
+  List<dynamic> friendsList = [];
 
   Widget _buildRow(index) {
     return ListTile(
@@ -66,6 +67,8 @@ class _VaultViewState extends State<VaultView> {
   Widget build(BuildContext context) {
     final vault_provider = Provider.of<VaultProvider>(context);
     final app_provider = Provider.of<AppProvider>(context);
+    friendsList = app_provider.currentFriends;
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
@@ -108,29 +111,12 @@ class _VaultViewState extends State<VaultView> {
                   icon: !_isEditMode
                       ? const Icon(Icons.search)
                       : const Icon(Icons.close))),
-          PopupMenuButton(
-              icon: const Icon(Icons.more_vert),
-              itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      child: ListTile(
-                        leading: Icon(Icons.edit),
-                        title: Text("Edit"),
-                      ),
-                      value: 1,
-                    ),
-                    PopupMenuItem(
-                      child: const ListTile(
-                        leading: Icon(Icons.share),
-                        title: Text("Share"),
-                      ),
-                      value: 2,
-                      onTap: () {
-                        //show a popup dialog with friends listed
-                        //Here we show the list of the users friends and pick one,
-                        //Save this to the 
-                      },
-                    )
-                  ]),
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: () {
+              openShareVault();
+            },
+          )
         ],
       ),
       body: ListView.builder(
@@ -172,6 +158,37 @@ class _VaultViewState extends State<VaultView> {
               )
             ]),
       );
+
+  //This is the screen for sharing the vault your in with a friend
+  Future openShareVault() => showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Share Vault With:'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for(int i = 0; i < friendsList.length; i++)
+            ElevatedButton(
+              child: Text(friendsList[i]["name"] as String, style: const TextStyle(fontSize: 18)),
+              onPressed: (){
+                Provider.of<AppProvider>(context, listen: false)
+                  .addSharedUserToVault (friendsList[i]["name"] as String, widget.vault);
+                Navigator.of(context).pop();
+              },
+            )
+        ],
+      ),
+      actions: [
+        TextButton(
+          child: const Text('Cancel', style: TextStyle(fontSize: 18)),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        )
+      ]
+    ),
+  );
 }
 
 class TextBoxSearch extends StatelessWidget {
