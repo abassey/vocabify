@@ -22,7 +22,7 @@ class _FriendsAccountState extends State<FriendsAccount> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text(widget.name + ' Profile')),
+        appBar: AppBar(title: Text(widget.name + '\'s Profile')),
         body: ListView(
           children: [
             buildTop(),
