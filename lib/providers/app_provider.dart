@@ -138,6 +138,7 @@ class AppProvider extends ChangeNotifier {
     });
     notifyListeners();
   }
+  
 
   void startLoginFlow() {
     _loginState = ApplicationLoginState.emailAddress;
@@ -346,8 +347,8 @@ class AppProvider extends ChangeNotifier {
   // FUNCTIONS FOR SHARING VAULTS -------------------------------------------*
 
   //Add a shared vault for the user
-  Future<void> addSharedUserToVault (String sharedUser, Vault vault){
-    var sharedUserList = [sharedUser];
+  Future<void> addSharedUserToVault (String sharedUser, String sharedUserUid ,Vault vault){
+    var sharedUserList = [{"name": sharedUser, "uid":sharedUserUid}];
     return FirebaseFirestore.instance
       .collection('vaults')
       .doc(vault.name + '_' + currentUser!.uid)
