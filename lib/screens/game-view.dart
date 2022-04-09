@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/app_provider.dart';
 import 'game.dart';
+import 'match_game.dart';
 
 class GameView extends StatefulWidget {
   const GameView({Key? key,}) : super(key: key);
@@ -14,10 +17,11 @@ class _GameViewState extends State<GameView> {
   List<Game> games = [];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { 
     return Scaffold(
-      appBar: SearchBar(),
-      body: GameViewContainer(),
+      // appBar: SearchBar(),
+      // body: GameViewContainer(),
+      body: MatchGameView(vault: Provider.of<AppProvider>(context).vaults.first, vaultIndex: -1), //
     );
   }
 
