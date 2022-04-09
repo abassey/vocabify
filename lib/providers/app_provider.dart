@@ -246,11 +246,12 @@ class AppProvider extends ChangeNotifier {
     addGridChild(item.name, context);
     return FirebaseFirestore.instance
         .collection('vaults')
-        .doc(currentUser!.uid)
+        .doc(item.name + '_' + currentUser!.uid)
         .set(<String, dynamic>{
           'name': item.name,
           'uid': currentUser!.uid,
-          'items': []
+          'items': [],
+          'sharedUsers': []
         });
   }
 
@@ -266,16 +267,12 @@ class AppProvider extends ChangeNotifier {
     return result;
   }
 
-  Future<void> updateFireStoreVaultItem(Vault vault) {
+  Future<void> updateFireStoreVaultItem(Vault vault){
     List<dynamic> saveList = createSavableWordList(vault);
     return FirebaseFirestore.instance
-        .collection('vaults')
-        .doc(currentUser!.uid)
-        .set(<String, dynamic>{
-          'name': vault.name,
-          'uid': currentUser!.uid,
-          'items': saveList
-        });
+      .collection('vaults')
+      .doc(vault.name + '_' + currentUser!.uid)
+      .update({'items': saveList});
   }
 
   // FUNCTIONS FOR ADDING FRIENDS -------------------------------------------*
@@ -290,7 +287,6 @@ class AppProvider extends ChangeNotifier {
         'email':currentUser!.email,
         'uid': currentUser!.uid,
         'friends': [],
-        'sharedVaults': []
       });
   }
 
@@ -350,32 +346,12 @@ class AppProvider extends ChangeNotifier {
   // FUNCTIONS FOR SHARING VAULTS -------------------------------------------*
 
   //Add a shared vault for the user
-  Future<void> updateSharedVaults (String vaultUid, String sharedUserUid) async{
-    var sharedVault = {"vault":vaultUid, "shared":sharedUserUid};
-    List<dynamic> sharedVaultsList = [sharedVault];
-    await FirebaseFirestore.instance
-      .collection('users')
-      .doc(currentUser!.uid)
-      .update({'shared': FieldValue.arrayUnion(sharedVaultsList)});
-    notifyListeners();
-  }
-
-  Future<void> shareVaults() async {
-
-    /*
-      - Step 1: if a user clicks on the share button inside of a vault
-      - find the vault they are working in (maybe change vaults id to uid)
-      - find who it belongs to, have user choose friend to share
-
-      - step 2: add to firestore shared vault collectiton
-      - Grabs vault and user name adds to firestore
-      - Add to users: -> currentUser: shared vaults: "vault": x, "friend": sharedUser
-                      -> shared user: shared vaults: "vault": x, "friend": currentUser
-      
-      - step 3: Grab vault object for each and display it on profile
-      - Look in homescreen to see how we visit a specific vault
-      - notifylisteners();
-     */
-
+  Future<void> addSharedUserToVault (String sharedUser, Vault vault){
+    var sharedUserList = [sharedUser];
+    return FirebaseFirestore.instance
+      .collection('vaults')
+      .doc(vault.name + '_' + currentUser!.uid)
+      .update({'sharedUsers': FieldValue.arrayUnion(sharedUserList)})
+      .then((value) => notifyListeners());
   }
 }
