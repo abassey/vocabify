@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (vaultName == null || vaultName.isEmpty) return;
       setState(() {
         Provider.of<AppProvider>(context, listen: false).addVaultToFireStore(
-            Vault(name: vaultName, vaultitems: [], fbusers: []), context);
+            Vault(uid:'',name: vaultName, vaultitems: [], fbusers: []), context);
       });
     } else {
       Navigator.push(
@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     }
                   }
                   Vault coreVault =
-                      Vault(name: "All Words", vaultitems: coreVaultItems, fbusers: []);
+                      Vault(uid: "core" ,name: "All Words", vaultitems: coreVaultItems, fbusers: []);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
