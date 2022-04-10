@@ -357,13 +357,20 @@ class AppProvider extends ChangeNotifier {
   }
 
   //update user collection with new friends
-  Future<void> listUpdater(String name, String uid) async {
+  Future<void> listUpdater (String name, String uid) async{
     var obj = {"name": name, "uid": uid};
-    List<dynamic> friendList = [obj];
+    List<dynamic> fl1 = [obj];
+    var obj2 = {"name": currentUser!.displayName, "uid": currentUser!.uid};
+    List<dynamic> fl2 = [obj2];
     await FirebaseFirestore.instance
-        .collection('users')
-        .doc(currentUser!.uid)
-        .update({'friends': FieldValue.arrayUnion(friendList)});
+      .collection('users')
+      .doc(currentUser!.uid)
+      .update({'friends': FieldValue.arrayUnion(fl1)});
+    //Update the other friend as well
+    await FirebaseFirestore.instance
+      .collection('users')
+      .doc(uid)
+      .update({'friends': FieldValue.arrayUnion(fl2)});
     currentFriends.add(obj);
     addFriend = true;
     notifyListeners();
