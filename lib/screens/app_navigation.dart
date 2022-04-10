@@ -4,6 +4,8 @@ import 'account-view.dart';
 import 'friends.dart';
 import 'game-view.dart';
 import 'home-screen.dart';
+import '../providers/app_provider.dart';
+import 'package:provider/provider.dart';
 
 
 class AppNavigation extends StatefulWidget {
@@ -19,13 +21,13 @@ class _AppNavigationState extends State<AppNavigation> {
   List<Widget> screens = <Widget>[
     //screen objects placed here
     const HomeScreen(),
-    const GameView(),
+    const Center(child: Text("Fix Needed")),
     const FriendsListScreen(),
     const AccountView(),
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  
     return Scaffold(
       body: IndexedStack(
         index: currentIndex,

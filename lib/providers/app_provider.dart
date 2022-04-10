@@ -50,6 +50,10 @@ class AppProvider extends ChangeNotifier {
   List<Widget> get vaultItems => _vaultItems;
   List<Vault> _vaults = [];
   List<Vault> get vaults => _vaults;
+  late Vault _coreVault;
+  late Set<DictItem> _coreVaultItemSet;
+  Vault get coreVault => _coreVault;
+  Set<DictItem> get coreVaultItemSet => _coreVaultItemSet;
   User? currentUser;
   List<dynamic> currentFriends = [];
 
@@ -88,6 +92,11 @@ class AppProvider extends ChangeNotifier {
     _vaultItems.addAll(sharedVaultItems);
   }
 
+  void _initCoreVault() {
+    _coreVaultItemSet = <DictItem>{};
+    _coreVault = Vault(name: "Core Vault", vaultitems: [], fbusers: [], uid: "none");
+  }
+
   Future<void> init() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -98,7 +107,7 @@ class AppProvider extends ChangeNotifier {
         currentUser = user;
         _loginState = ApplicationLoginState.loggedIn;
         _displayName = currentUser?.displayName;
-
+        _initCoreVault();
         FirebaseFirestore.instance
             .collection('vaults')
             .where('sharedUsers',
@@ -131,6 +140,7 @@ class AppProvider extends ChangeNotifier {
         FirebaseFirestore.instance
             .collection('vaults')
             .where('uid', isEqualTo: user.uid)
+            .where('isCoreVault', isEqualTo: false)
             .snapshots()
             .listen((snapshot) {
           _vaults = [];
@@ -156,6 +166,33 @@ class AppProvider extends ChangeNotifier {
           }
           notifyListeners();
         });
+
+        // This will be easier
+        FirebaseFirestore.instance
+            .collection('vaults')
+            .where('uid', isEqualTo: user.uid)
+            .where('isCoreVault', isEqualTo: true)
+            .snapshots()
+            .listen((snapshot) {
+              if (snapshot.docs.isEmpty) {
+                return;
+              }
+              final document = snapshot.docs.first;
+              List<DictItem> items = (document['items'] as List<dynamic>)
+                .map((item) => DictItem(
+                    word: item['word'],
+                    definitions: (item['definitions'] as List<dynamic>)
+                        .map((e) => e.toString())
+                        .toList(),
+                    synonyms: (item['synonyms'] as List<dynamic>)
+                        .map((e) => e.toString())
+                        .toList()))
+                .toList();
+              _coreVaultItemSet = items.toSet();
+              _coreVault = Vault(name: document['name'] as String, vaultitems: items, fbusers: [], uid: document['uid']);
+          notifyListeners();
+        });
+
         notifyListeners();
       } else {
         _loginState = ApplicationLoginState.emailAddress;
@@ -175,12 +212,16 @@ class AppProvider extends ChangeNotifier {
   }
 
   void addVaultItem(int index, DictItem vaultItem) {
-    if (index != -1) {
-      _vaults[index].vaultitems.add(vaultItem);
-      // todo -> check if this vault is shared, if so run another function
-      //todo -> add vault owner and is shared props to a vault
-      updateFireStoreVaultItem(_vaults[index]);
-    }
+    _vaults[index].vaultitems.add(vaultItem);
+    // todo -> check if this vault is shared, if so run another function
+    //todo -> add vault owner and is shared props to a vault
+    updateFireStoreVaultItem(_vaults[index]);
+    notifyListeners();
+  }
+
+  void addCoreVaultItem(DictItem vaultItem) {
+    _coreVault.vaultitems.add(vaultItem);
+    updateFireStoreCoreVault(_coreVault);
     notifyListeners();
   }
 
@@ -254,6 +295,7 @@ class AppProvider extends ChangeNotifier {
         password: password,
       );
       getFriendsList();
+      _initCoreVault();
       _displayName = currentUser?.displayName;
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
@@ -276,6 +318,8 @@ class AppProvider extends ChangeNotifier {
       await credential.user!.updateDisplayName(displayName);
       await currentUser?.reload();
       addUserToFireStore();
+      _initCoreVault();
+      addCoreVaultToFireStore();
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
     }
@@ -298,9 +342,24 @@ class AppProvider extends ChangeNotifier {
         .set(<String, dynamic>{
       'name': item.name,
       'uid': currentUser!.uid,
+      'isCoreVault': false,
       'items': [],
       'sharedUsers': []
     });
+  }
+
+  // Adding the core vault in firestore
+  Future<void> addCoreVaultToFireStore() {
+    print(currentUser!.uid);
+    return FirebaseFirestore.instance
+      .collection('vaults')
+      .doc("CoreVault_" + currentUser!.uid)
+      .set(<String, dynamic> {
+        'name': "CoreVault",
+        'uid': currentUser!.uid,
+        'items': [],
+        'isCoreVault': true
+      });
   }
 
   dynamic createSavableWordList(Vault vault) {
@@ -321,6 +380,19 @@ class AppProvider extends ChangeNotifier {
     return FirebaseFirestore.instance
         .collection('vaults')
         .doc(vault.name + '_' + vault.uid)
+        .update({'items': saveList});
+  }
+
+  Future<void> updateFireStoreCoreVault(Vault vault) {
+    _coreVaultItemSet.addAll(vault.vaultitems);
+    _coreVault.vaultitems = _coreVaultItemSet.toList();
+    List<dynamic> saveList = createSavableWordList(_coreVault);
+    for (final item in saveList) {
+      print(item['word']);
+    }
+    return FirebaseFirestore.instance
+        .collection('vaults')
+        .doc("CoreVault_" + currentUser!.uid)
         .update({'items': saveList});
   }
 
