@@ -40,9 +40,9 @@ class _FriendsAccountState extends State<FriendsAccount> {
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
-          child: Text(widget.name,
-              style:
-                  const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
+          child: Center(
+            child: Text(widget.name, style:const TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
+          ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
