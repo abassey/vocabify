@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:vocabify/data/dictapi.dart';
 import 'package:provider/provider.dart';
 import 'package:vocabify/data/httpget.dart';
+import 'package:vocabify/data/vault.dart';
 import '../providers/app_provider.dart';
 import '../extensions/string_extensions.dart';
 
-class WordView extends StatelessWidget {
+class WordView extends StatefulWidget {
   const WordView(
       {Key? key, required this.word, required this.isPeek, this.vaultIndex})
       : super(key: key);
@@ -14,9 +15,41 @@ class WordView extends StatelessWidget {
   final int? vaultIndex;
 
   @override
+  State<WordView> createState() => _WordViewState();
+}
+
+class _WordViewState extends State<WordView> {
+  @override
   Widget build(BuildContext context) {
     //this needs to be added at the top of the page, but not under appbar or floating action button
     final appProvider = Provider.of<AppProvider>(context);
+    var allVaults = appProvider.vaults;
+    List<String> vaultList = [];
+    List<String> selectedVaults = [];
+    bool isChecked = false;
+
+    vaultList.add("All Words");
+
+    for (Vault v in allVaults) {
+      vaultList.add(v.name);
+    }
+
+    Widget buildItem(String item, int index) {
+      return CheckboxListTile(
+        title: Text(item),
+        controlAffinity: ListTileControlAffinity.trailing,
+        value: selectedVaults.contains(vaultList[index]),
+        onChanged: (bool? value) {
+          setState(() {
+            if (value == true) {
+              selectedVaults.add(vaultList[index]);
+            } else {
+              selectedVaults.remove(vaultList[index]);
+            }
+          });
+        },
+      );
+    }
 
     return Scaffold(
         floatingActionButton: FloatingActionButton(
@@ -32,22 +65,78 @@ class WordView extends StatelessWidget {
               PopupMenuButton(
                   icon: const Icon(Icons.more_horiz, color: Colors.black),
                   itemBuilder: (context) => [
-                        const PopupMenuItem(
-                          child: ListTile(
+                        PopupMenuItem(
+                          child: const ListTile(
                             leading: Icon(Icons.add_circle_outline),
                             title: Text("Add To Vault"),
                           ),
                           value: 1,
+                          onTap: () => {
+                            Future.delayed(
+                                const Duration(seconds: 0),
+                                () => showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Select Vaults'),
+                                        content: SingleChildScrollView(
+                                          child: ListTileTheme(
+                                            contentPadding:
+                                                const EdgeInsets.fromLTRB(
+                                                    14.0, 0.0, 24.0, 0.0),
+                                            child: ListBody(
+                                              children: [
+                                                for (var i = 0;
+                                                    i < vaultList.length;
+                                                    i++)
+                                                  buildItem(vaultList[i], i)
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            child: const Text('ADD'),
+                                            onPressed: () {
+                                              for (var i = 0;
+                                                  i < selectedVaults.length;
+                                                  i++) {
+                                                if (selectedVaults[i] !=
+                                                    "All Words") {
+                                                  int vaultIndex = allVaults
+                                                      .indexWhere((element) =>
+                                                          element.name ==
+                                                          selectedVaults[i]);
+                                                  appProvider.addVaultItem(
+                                                      vaultIndex, widget.word);
+                                                } else {
+                                                  appProvider.addCoreVaultItem(
+                                                      widget.word);
+                                                }
+                                              }
+                                              Navigator.pop(
+                                                  context, selectedVaults);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                          },
                         ),
                         PopupMenuItem(
                           child: const ListTile(
                             leading: Icon(Icons.remove_circle_outline),
                             title: Text("Delete Word"),
                           ),
-                          enabled: isPeek,
+                          enabled: widget.isPeek,
                           value: 2,
                           onTap: () => {
-                            appProvider.removeVaultItem(vaultIndex!, word.word),
+                            if (widget.vaultIndex != null)
+                              {
+                                appProvider.removeVaultItem(
+                                    widget.vaultIndex!, widget.word.word),
+                                Navigator.pop(context),
+                              },
+                            appProvider.removeCoreVaultItem(widget.word),
                             Navigator.pop(context),
                           },
                         )
@@ -68,7 +157,7 @@ class WordView extends StatelessWidget {
                               children: [
                                 const Padding(
                                     padding: EdgeInsets.fromLTRB(20, 40, 0, 0)),
-                                Text(word.word.toTitleCase(),
+                                Text(widget.word.word.toTitleCase(),
                                     style: const TextStyle(
                                         fontSize: 30,
                                         //fontStyle: FontStyle.italic,
@@ -97,7 +186,7 @@ class WordView extends StatelessWidget {
                                         fontWeight: FontWeight.w500)),
                                 const Padding(padding: EdgeInsets.all(4)),
                                 for (var index = 0;
-                                    index < word.definitions.length;
+                                    index < widget.word.definitions.length;
                                     index++)
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -114,7 +203,7 @@ class WordView extends StatelessWidget {
                                           const Padding(
                                               padding: EdgeInsets.all(4.0)),
                                           Text(
-                                              "${index + 1}. ${word.definitions[index].toCapitalized()}",
+                                              "${index + 1}. ${widget.word.definitions[index].toCapitalized()}",
                                               textAlign: TextAlign.start,
                                               overflow: TextOverflow.visible,
                                               style: const TextStyle(
@@ -129,7 +218,7 @@ class WordView extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                word.synonyms.isEmpty
+                                widget.word.synonyms.isEmpty
                                     ? const Text(" ")
                                     : const Text("Synonyms:",
                                         style: TextStyle(
@@ -141,7 +230,7 @@ class WordView extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    for (var syn in word.synonyms)
+                                    for (var syn in widget.word.synonyms)
                                       Padding(
                                           padding: const EdgeInsets.all(4),
                                           child: GestureDetector(

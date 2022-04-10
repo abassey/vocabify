@@ -97,7 +97,8 @@ class AppProvider extends ChangeNotifier {
 
   void _initCoreVault() {
     _coreVaultItemSet = <DictItem>{};
-    _coreVault = Vault(name: "Core Vault", vaultitems: [], fbusers: [], uid: "none");
+    _coreVault =
+        Vault(name: "Core Vault", vaultitems: [], fbusers: [], uid: "none");
   }
 
   Future<void> init() async {
@@ -177,22 +178,26 @@ class AppProvider extends ChangeNotifier {
             .where('isCoreVault', isEqualTo: true)
             .snapshots()
             .listen((snapshot) {
-              if (snapshot.docs.isEmpty) {
-                return;
-              }
-              final document = snapshot.docs.first;
-              List<DictItem> items = (document['items'] as List<dynamic>)
-                .map((item) => DictItem(
-                    word: item['word'],
-                    definitions: (item['definitions'] as List<dynamic>)
-                        .map((e) => e.toString())
-                        .toList(),
-                    synonyms: (item['synonyms'] as List<dynamic>)
-                        .map((e) => e.toString())
-                        .toList()))
-                .toList();
-              _coreVaultItemSet = items.toSet();
-              _coreVault = Vault(name: document['name'] as String, vaultitems: items, fbusers: [], uid: document['uid']);
+          if (snapshot.docs.isEmpty) {
+            return;
+          }
+          final document = snapshot.docs.first;
+          List<DictItem> items = (document['items'] as List<dynamic>)
+              .map((item) => DictItem(
+                  word: item['word'],
+                  definitions: (item['definitions'] as List<dynamic>)
+                      .map((e) => e.toString())
+                      .toList(),
+                  synonyms: (item['synonyms'] as List<dynamic>)
+                      .map((e) => e.toString())
+                      .toList()))
+              .toList();
+          _coreVaultItemSet = items.toSet();
+          _coreVault = Vault(
+              name: document['name'] as String,
+              vaultitems: items,
+              fbusers: [],
+              uid: document['uid']);
           notifyListeners();
         });
 
@@ -224,6 +229,12 @@ class AppProvider extends ChangeNotifier {
 
   void addCoreVaultItem(DictItem vaultItem) {
     _coreVault.vaultitems.add(vaultItem);
+    updateFireStoreCoreVault(_coreVault);
+    notifyListeners();
+  }
+
+  void removeCoreVaultItem(DictItem vaultItem) {
+    _coreVault.vaultitems.remove(vaultItem);
     updateFireStoreCoreVault(_coreVault);
     notifyListeners();
   }
@@ -355,14 +366,14 @@ class AppProvider extends ChangeNotifier {
   Future<void> addCoreVaultToFireStore() {
     print(currentUser!.uid);
     return FirebaseFirestore.instance
-      .collection('vaults')
-      .doc("CoreVault_" + currentUser!.uid)
-      .set(<String, dynamic> {
-        'name': "CoreVault",
-        'uid': currentUser!.uid,
-        'items': [],
-        'isCoreVault': true
-      });
+        .collection('vaults')
+        .doc("CoreVault_" + currentUser!.uid)
+        .set(<String, dynamic>{
+      'name': "CoreVault",
+      'uid': currentUser!.uid,
+      'items': [],
+      'isCoreVault': true
+    });
   }
 
   dynamic createSavableWordList(Vault vault) {
@@ -432,28 +443,28 @@ class AppProvider extends ChangeNotifier {
   }
 
   //update user collection with new friends
-  Future<void> friendUpdater (String name, String uid) async{
+  Future<void> friendUpdater(String name, String uid) async {
     var obj = {"name": name, "uid": uid};
     List<dynamic> fl1 = [obj];
     var obj2 = {"name": currentUser!.displayName, "uid": currentUser!.uid};
     List<dynamic> fl2 = [obj2];
     await FirebaseFirestore.instance
-      .collection('users')
-      .doc(currentUser!.uid)
-      .update({'friends': FieldValue.arrayUnion(fl1)});
+        .collection('users')
+        .doc(currentUser!.uid)
+        .update({'friends': FieldValue.arrayUnion(fl1)});
     //Update the other friend as well
     await FirebaseFirestore.instance
-      .collection('users')
-      .doc(uid)
-      .update({'friends': FieldValue.arrayUnion(fl2)});
+        .collection('users')
+        .doc(uid)
+        .update({'friends': FieldValue.arrayUnion(fl2)});
 
     //check if they already have friend - contains doesnt work bc some type issue
-    for(int i = 0; i < currentFriends.length; i++){
-      if(currentFriends[i]['uid'] == obj['uid']){
+    for (int i = 0; i < currentFriends.length; i++) {
+      if (currentFriends[i]['uid'] == obj['uid']) {
         hasFriend = true;
       }
     }
-    if(!hasFriend)currentFriends.add(obj);
+    if (!hasFriend) currentFriends.add(obj);
     addFriend = true;
     hasFriend = false;
     notifyListeners();
@@ -483,30 +494,30 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteFriend(String uid) async{
+  Future<void> deleteFriend(String uid) async {
     List<dynamic> otherPersonFriendList = [];
     currentFriends.removeWhere((element) => element['uid'] == uid);
     await FirebaseFirestore.instance
-      .collection('users')
-      .doc(currentUser!.uid)
-      .update({'friends': currentFriends});
+        .collection('users')
+        .doc(currentUser!.uid)
+        .update({'friends': currentFriends});
     await FirebaseFirestore.instance
-      .collection('users')
-      .doc(uid)
-      .get()
-      .then((value) => otherPersonFriendList = value['friends']);
-    otherPersonFriendList.removeWhere((element) => element['uid'] == currentUser!.uid);
+        .collection('users')
+        .doc(uid)
+        .get()
+        .then((value) => otherPersonFriendList = value['friends']);
+    otherPersonFriendList
+        .removeWhere((element) => element['uid'] == currentUser!.uid);
     await FirebaseFirestore.instance
-      .collection('users')
-      .doc(uid)
-      .update({'friends': otherPersonFriendList});
+        .collection('users')
+        .doc(uid)
+        .update({'friends': otherPersonFriendList});
     notifyListeners();
   }
 
-
-  String getFriend(String name){
-    for(var friend in currentFriends){
-      if(friend['name'] as String == name){
+  String getFriend(String name) {
+    for (var friend in currentFriends) {
+      if (friend['name'] as String == name) {
         friendUid = friend['uid'] as String;
         return friend['uid'] as String;
       }
