@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vocabify/data/dictapi.dart';
 import 'package:provider/provider.dart';
+import 'package:vocabify/data/httpget.dart';
 import '../providers/app_provider.dart';
 import '../extensions/string_extensions.dart';
 
@@ -128,11 +129,13 @@ class WordView extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Synonyms:",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontStyle: FontStyle.italic,
-                                        fontWeight: FontWeight.w500)),
+                                word.synonyms.isEmpty
+                                    ? const Text(" ")
+                                    : const Text("Synonyms:",
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontStyle: FontStyle.italic,
+                                            fontWeight: FontWeight.w500)),
                                 const Padding(padding: EdgeInsets.all(4)),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,12 +144,28 @@ class WordView extends StatelessWidget {
                                     for (var syn in word.synonyms)
                                       Padding(
                                           padding: const EdgeInsets.all(4),
-                                          child: Card(
-                                              color: Colors.grey,
-                                              child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(10),
-                                                  child: Text(syn))))
+                                          child: GestureDetector(
+                                            onTap: () async {
+                                              DictItem toPush =
+                                                  await HttpGet(word: syn)
+                                                      .loadDictItem();
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          WordView(
+                                                            word: toPush,
+                                                            isPeek: false,
+                                                          )));
+                                            },
+                                            child: Card(
+                                                color: Colors.grey,
+                                                child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    child: Text(syn))),
+                                          ))
                                   ],
                                 ),
                                 const Padding(padding: EdgeInsets.all(8.0))
