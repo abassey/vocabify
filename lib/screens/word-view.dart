@@ -18,6 +18,7 @@ class WordView extends StatelessWidget {
     //this needs to be added at the top of the page, but not under appbar or floating action button
     final appProvider = Provider.of<AppProvider>(context);
 
+    bool checked = false;
     return Scaffold(
         floatingActionButton: FloatingActionButton(
             onPressed: () => Navigator.pop(context),
@@ -32,12 +33,65 @@ class WordView extends StatelessWidget {
               PopupMenuButton(
                   icon: const Icon(Icons.more_horiz, color: Colors.black),
                   itemBuilder: (context) => [
-                        const PopupMenuItem(
-                          child: ListTile(
+                        PopupMenuItem(
+                          child: const ListTile(
                             leading: Icon(Icons.add_circle_outline),
                             title: Text("Add To Vault"),
                           ),
                           value: 1,
+                          onTap: () => {
+                            Future.delayed(
+                                const Duration(seconds: 0),
+                                () => showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Select Vaults'),
+                                        content: SingleChildScrollView(
+                                          child: ListTileTheme(
+                                            contentPadding:
+                                                const EdgeInsets.fromLTRB(
+                                                    14.0, 0.0, 24.0, 0.0),
+                                            child: ListBody(
+                                              children: [
+                                                CheckboxListTile(
+                                                  title: const Text("data"),
+                                                  controlAffinity:
+                                                      ListTileControlAffinity
+                                                          .trailing,
+                                                  value: checked,
+                                                  onChanged: (bool? value) {},
+                                                ),
+                                                CheckboxListTile(
+                                                  title: const Text("data 2"),
+                                                  controlAffinity:
+                                                      ListTileControlAffinity
+                                                          .trailing,
+                                                  value: checked,
+                                                  onChanged: (bool? value) {},
+                                                ),
+                                                CheckboxListTile(
+                                                  title: const Text("data 3"),
+                                                  controlAffinity:
+                                                      ListTileControlAffinity
+                                                          .trailing,
+                                                  value: checked,
+                                                  onChanged: (bool? value) {},
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            child: const Text('ADD'),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                          },
                         ),
                         PopupMenuItem(
                           child: const ListTile(
