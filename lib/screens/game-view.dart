@@ -21,19 +21,38 @@ class _GameViewState extends State<GameView> {
   Widget build(BuildContext context) { 
     return Scaffold(
       // appBar: SearchBar(),
-      // body: GameViewContainer(),
+      body: GameViewContainer(),
       //there is only one game right now
-      body: MatchGameView(vault: Provider.of<AppProvider>(context).vaults.first, vaultIndex: -1),
+      //body: MatchGameView(vault: Provider.of<AppProvider>(context).coreVault, vaultIndex: -1),
     );
   }
 
   //skeleton concept for a vault selection; make future?
-  MatchGameView _selectVault(context){
-    List<Vault> vault = context.vaults;
-    var input = 0;
-    //user selection
-    return MatchGameView(vault: vault[input], vaultIndex: -1);
+  DropdownButton _selectVaultDropdown() {
+    List<Vault> vault = (Provider.of<AppProvider>(context)..vaults) as List<Vault>;
+    String selected = Provider.of<AppProvider>(context).coreVault.name;
+
+    List<DropdownMenuItem> menuItemList = vault
+        .map((val) => DropdownMenuItem(value: val, child: Text(val.name)))
+        .toList();
+
+    return DropdownButton(
+      value: selected,
+      onChanged: (val) => setState(() => selected = val),
+      items: menuItemList,
+    );   
   }
+
+  Future selectVault() => showDialog(
+    context: context, 
+    builder: (context) => AlertDialog(
+      title: Text('Which Vault', textAlign: TextAlign.center, style: TextStyle(fontSize: 22)),
+      content: Container (
+        child: _selectVaultDropdown(),
+      ),
+    ),
+    
+  );
 
 
   // Overall body container in the gameview; game selector
@@ -44,15 +63,15 @@ class _GameViewState extends State<GameView> {
   }
   Widget _buildRow() {
     return ListTile(
-      leading: Text("WordMemorizer",
+      leading: const Text("Definition Match",
           textScaleFactor: 1.6,
-          style: const TextStyle(fontWeight: FontWeight.bold)),
-      title: Text(
-        "Played 10 times",
-        textScaleFactor: 1.3,
-        textAlign: TextAlign.right,
-      ),
-      onTap: () {},
+          style: TextStyle(fontWeight: FontWeight.bold)),
+      // title: const Text(
+      //   "Played 10 times",
+      //   textScaleFactor: 1.3,
+      //   textAlign: TextAlign.right,
+      // ),
+      onTap: () => MatchGameView(vault: Provider.of<AppProvider>(context).coreVault, vaultIndex: -1),
     );
   }
   // The AppBar widget in gameview

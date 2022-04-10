@@ -65,7 +65,7 @@ class _MatchGameViewState extends State<MatchGameView> {
   List<String> getFalseOptions(answer, vaultItems){
     List<String> options = [];
     String temp;
-    if (getVaultItemCount() < 5) {
+    if (getVaultItemCount() < 5 && getVaultItemCount() != 0) {
       while (options.length < getVaultItemCount() - 1){
         temp = getRandomWord(vaultItems).word;
         if (temp != answer && !options.contains(temp)) {
@@ -88,6 +88,17 @@ class _MatchGameViewState extends State<MatchGameView> {
     final ButtonStyle style = ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
     DictItem mainWord = getRandomWord(widget.vault.vaultitems);
     List<String> wordOptions = getFalseOptions(mainWord.word, widget.vault.vaultitems);
+
+    if (wordOptions.isEmpty){
+      return Container(
+        child: const Text(
+          "No words in vault.\n Look up some words and come back to try them out!",
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 32),
+        ),
+      );
+    }
+
     wordOptions.insert(Random().nextInt(wordOptions.length),mainWord.word);
     usedWords.add(mainWord.word);
 
@@ -200,13 +211,15 @@ class _MatchGameViewState extends State<MatchGameView> {
             finalScore.toString()+"/5",
             style: TextStyle(fontSize: 48, fontWeight: FontWeight.w600),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(4,10,4,0),
-            child: Text(
-              "Total Games Won: ", //if 3/5 or over add to this which is the score object
-              style:  TextStyle(fontSize: 22),
-            ),
-          )
+          
+          // TODO: Implement win count
+          // Padding(
+          //   padding: const EdgeInsets.fromLTRB(4,10,4,0),
+          //   child: Text(
+          //     "Total Games Won: ", //if 3/5 or over add to this which is the score object
+          //     style:  TextStyle(fontSize: 22),
+          //   ),
+          // )
         ]
       ),
       actions: [

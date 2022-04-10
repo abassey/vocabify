@@ -21,8 +21,7 @@ class _AppNavigationState extends State<AppNavigation> {
   List<Widget> screens = <Widget>[
     //screen objects placed here
     const HomeScreen(),
-    //const GameView(),
-    const Text('Game view broken'),
+    const GameView(),
     const FriendsListScreen(),
     const AccountView(),
   ];
