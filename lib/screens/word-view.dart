@@ -26,7 +26,6 @@ class _WordViewState extends State<WordView> {
     var allVaults = appProvider.vaults;
     List<String> vaultList = [];
     List<String> selectedVaults = [];
-    bool isChecked = false;
 
     vaultList.add("All Words");
 
