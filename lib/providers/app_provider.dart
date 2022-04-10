@@ -23,6 +23,7 @@ class AppProvider extends ChangeNotifier {
   String? get name => _displayName;
   bool addFriend = false;
   bool hasFriend = false;
+  String friendUid = '';
 
   StreamSubscription<QuerySnapshot>? _vaultItemSubscription;
 
@@ -434,6 +435,7 @@ class AppProvider extends ChangeNotifier {
   String getFriend(String name){
     for(var friend in currentFriends){
       if(friend['name'] as String == name){
+        friendUid = friend['uid'] as String;
         return friend['uid'] as String;
       }
     }

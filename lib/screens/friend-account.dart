@@ -20,7 +20,6 @@ class _FriendsAccountState extends State<FriendsAccount> {
   final double backDropHeight = 200;
   final double profileHeight = 144;
   bool friendState = true;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +60,11 @@ class _FriendsAccountState extends State<FriendsAccount> {
                     friendState = false;
                   });
                 }else{
-                  
+                  String uid = Provider.of<AppProvider>(context, listen: false).friendUid;
+                  Provider.of<AppProvider>(context, listen: false).friendUpdater(widget.name, uid);
+                  setState(() {
+                    friendState = true;
+                  });
                 }
               },
             ),
