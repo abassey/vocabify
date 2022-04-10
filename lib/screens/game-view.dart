@@ -20,14 +20,13 @@ class _GameViewState extends State<GameView> {
   @override
   Widget build(BuildContext context) { 
     return Scaffold(
-      // appBar: SearchBar(),
+      appBar: SearchBar(),
       body: GameViewContainer(),
       //there is only one game right now
       //body: MatchGameView(vault: Provider.of<AppProvider>(context).coreVault, vaultIndex: -1),
     );
   }
 
-  //skeleton concept for a vault selection; make future?
   DropdownButton _selectVaultDropdown() {
     List<Vault> vault = (Provider.of<AppProvider>(context)..vaults) as List<Vault>;
     String selected = Provider.of<AppProvider>(context).coreVault.name;
