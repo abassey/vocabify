@@ -47,7 +47,6 @@ class _WordViewState extends State<WordView> {
               selectedVaults.remove(vaultList[index]);
             }
           });
-          print(selectedVaults);
         },
       );
     }
@@ -131,8 +130,13 @@ class _WordViewState extends State<WordView> {
                           enabled: widget.isPeek,
                           value: 2,
                           onTap: () => {
-                            appProvider.removeVaultItem(
-                                widget.vaultIndex!, widget.word.word),
+                            if (widget.vaultIndex != null)
+                              {
+                                appProvider.removeVaultItem(
+                                    widget.vaultIndex!, widget.word.word),
+                                Navigator.pop(context),
+                              },
+                            appProvider.removeCoreVaultItem(widget.word),
                             Navigator.pop(context),
                           },
                         )
