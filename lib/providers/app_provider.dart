@@ -14,7 +14,6 @@ import '../widgets/shared_vault.dart';
 import '../widgets/user_vault.dart';
 
 class AppProvider extends ChangeNotifier {
-
   ApplicationLoginState _loginState = ApplicationLoginState.emailAddress;
   ApplicationLoginState get loginState => _loginState;
   String? _email;
@@ -90,7 +89,6 @@ class AppProvider extends ChangeNotifier {
   }
 
   Future<void> init() async {
-
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
@@ -102,40 +100,64 @@ class AppProvider extends ChangeNotifier {
         _displayName = currentUser?.displayName;
 
         FirebaseFirestore.instance
-          .collection('vaults')
-          .where('sharedUsers', arrayContains: {"name": user.displayName, "uid": user.uid})
-          .snapshots()
-          .listen((snapshot){
-            sharedVaultItems = [];
-            sharedVaults = [];
-            for (final document in snapshot.docs) {
-              List<DictItem> items = (document['items'] as List<dynamic>).map((item) =>  
-                  DictItem(word: item['word'], definitions: (item['definitions'] as List<dynamic>).map((e) => e.toString()).toList(),
-                  synonyms: (item['synonyms'] as List<dynamic>).map((e) => e.toString()).toList())).toList();
-              sharedVaults.add(Vault(uid:document['uid'] as String,name: document['name'] as String, vaultitems: items, fbusers: []));
-              sharedVaultItems.add(SharedVault(name: document['name'] as String));
-            }
-          });
+            .collection('vaults')
+            .where('sharedUsers',
+                arrayContains: {"name": user.displayName, "uid": user.uid})
+            .snapshots()
+            .listen((snapshot) {
+              sharedVaultItems = [];
+              sharedVaults = [];
+              for (final document in snapshot.docs) {
+                List<DictItem> items = (document['items'] as List<dynamic>)
+                    .map((item) => DictItem(
+                        word: item['word'],
+                        definitions: (item['definitions'] as List<dynamic>)
+                            .map((e) => e.toString())
+                            .toList(),
+                        synonyms: (item['synonyms'] as List<dynamic>)
+                            .map((e) => e.toString())
+                            .toList()))
+                    .toList();
+                sharedVaults.add(Vault(
+                    uid: document['uid'] as String,
+                    name: document['name'] as String,
+                    vaultitems: items,
+                    fbusers: []));
+                sharedVaultItems
+                    .add(SharedVault(name: document['name'] as String));
+              }
+            });
 
         FirebaseFirestore.instance
             .collection('vaults')
             .where('uid', isEqualTo: user.uid)
             .snapshots()
             .listen((snapshot) {
-            _vaults = [];
-            _vaults.addAll(sharedVaults);
-            initVaultItems();
+          _vaults = [];
+          _vaults.addAll(sharedVaults);
+          initVaultItems();
           for (final document in snapshot.docs) {
-            List<DictItem> items = (document['items'] as List<dynamic>).map((item) =>  
-                DictItem(word: item['word'], definitions: (item['definitions'] as List<dynamic>).map((e) => e.toString()).toList(),
-                synonyms: (item['synonyms'] as List<dynamic>).map((e) => e.toString()).toList())).toList();
-            _vaults.add(Vault(uid:document['uid'] as String, name: document['name'] as String, vaultitems: items, fbusers: []));
+            List<DictItem> items = (document['items'] as List<dynamic>)
+                .map((item) => DictItem(
+                    word: item['word'],
+                    definitions: (item['definitions'] as List<dynamic>)
+                        .map((e) => e.toString())
+                        .toList(),
+                    synonyms: (item['synonyms'] as List<dynamic>)
+                        .map((e) => e.toString())
+                        .toList()))
+                .toList();
+            _vaults.add(Vault(
+                uid: document['uid'] as String,
+                name: document['name'] as String,
+                vaultitems: items,
+                fbusers: []));
             _vaultItems.add(UserVault(name: document['name'] as String));
           }
           notifyListeners();
         });
         notifyListeners();
-      }else {
+      } else {
         _loginState = ApplicationLoginState.emailAddress;
         _vaults = [];
         _vaultItems = [];
@@ -146,14 +168,13 @@ class AppProvider extends ChangeNotifier {
     });
     notifyListeners();
   }
-  
 
   void startLoginFlow() {
     _loginState = ApplicationLoginState.emailAddress;
     notifyListeners();
   }
 
-  void addVaultItems(int index, DictItem vaultItem) {
+  void addVaultItem(int index, DictItem vaultItem) {
     if (index != -1) {
       _vaults[index].vaultitems.add(vaultItem);
       // todo -> check if this vault is shared, if so run another function
@@ -163,15 +184,32 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeVaultItem(int index, String vaultItem) {
+    if (index != -1) {
+      _vaults[index]
+          .vaultitems
+          .removeWhere((element) => element.word == vaultItem);
+      // todo -> check if this vault is shared, if so run another function
+      //todo -> add vault owner and is shared props to a vault
+      updateFireStoreVaultItem(_vaults[index]);
+    }
+    notifyListeners();
+  }
+
   void addGridChild(String vaultName, String vaultUid, BuildContext context) {
-    _vaults.add(Vault(uid: vaultUid, name: vaultName, vaultitems: [], fbusers: []));
+    _vaults.add(
+        Vault(uid: vaultUid, name: vaultName, vaultitems: [], fbusers: []));
     _vaultItems.add(Padding(
       padding: const EdgeInsets.all(10.0),
       child: GestureDetector(
         onTap: () {
-          Vault vault = Vault(uid: vaultUid, name: vaultName, vaultitems: [], fbusers: []);
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => VaultView(vault: vault, vaultIndex: _vaultItems.length + 1)));
+          Vault vault = Vault(
+              uid: vaultUid, name: vaultName, vaultitems: [], fbusers: []);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => VaultView(
+                      vault: vault, vaultIndex: _vaultItems.length + 1)));
         },
         child: Container(
           width: 30.0,
@@ -258,16 +296,16 @@ class AppProvider extends ChangeNotifier {
         .collection('vaults')
         .doc(item.name + '_' + currentUser!.uid)
         .set(<String, dynamic>{
-          'name': item.name,
-          'uid': currentUser!.uid,
-          'items': [],
-          'sharedUsers': []
-        });
+      'name': item.name,
+      'uid': currentUser!.uid,
+      'items': [],
+      'sharedUsers': []
+    });
   }
 
   dynamic createSavableWordList(Vault vault) {
     List<dynamic> result = [];
-    for (int i = 0;i<vault.vaultitems.length;i++) {
+    for (int i = 0; i < vault.vaultitems.length; i++) {
       result.add({
         'word': vault.vaultitems[i].word,
         'definitions': vault.vaultitems[i].definitions,
@@ -278,12 +316,12 @@ class AppProvider extends ChangeNotifier {
   }
 
   //This is where the uid will not match
-  Future<void> updateFireStoreVaultItem(Vault vault){
+  Future<void> updateFireStoreVaultItem(Vault vault) {
     List<dynamic> saveList = createSavableWordList(vault);
     return FirebaseFirestore.instance
-      .collection('vaults')
-      .doc(vault.name + '_' + vault.uid)
-      .update({'items': saveList});
+        .collection('vaults')
+        .doc(vault.name + '_' + vault.uid)
+        .update({'items': saveList});
   }
 
   // FUNCTIONS FOR ADDING FRIENDS -------------------------------------------*
@@ -291,24 +329,24 @@ class AppProvider extends ChangeNotifier {
   //Creating user collection if this fails change back to DocumentReference
   Future<void> addUserToFireStore() {
     return FirebaseFirestore.instance
-      .collection('users')
-      .doc(currentUser!.uid)
-      .set(<String, dynamic>{
-        'name': currentUser!.displayName,
-        'email':currentUser!.email,
-        'uid': currentUser!.uid,
-        'friends': [],
-      });
+        .collection('users')
+        .doc(currentUser!.uid)
+        .set(<String, dynamic>{
+      'name': currentUser!.displayName,
+      'email': currentUser!.email,
+      'uid': currentUser!.uid,
+      'friends': [],
+    });
   }
 
   //get a user from thr user collection
-  Future<void> updateFriendList(String friendEmail) async{
+  Future<void> updateFriendList(String friendEmail) async {
     await FirebaseFirestore.instance
-    .collection('users')
-    .get()
-    .then((QuerySnapshot querySnapshot) async {
-      for (var doc in querySnapshot.docs){
-        if (friendEmail == doc["email"] && friendEmail != currentUser!.email){
+        .collection('users')
+        .get()
+        .then((QuerySnapshot querySnapshot) async {
+      for (var doc in querySnapshot.docs) {
+        if (friendEmail == doc["email"] && friendEmail != currentUser!.email) {
           await listUpdater(doc["name"], doc["uid"]);
           return;
         }
@@ -319,50 +357,54 @@ class AppProvider extends ChangeNotifier {
   }
 
   //update user collection with new friends
-  Future<void> listUpdater (String name, String uid) async{
+  Future<void> listUpdater(String name, String uid) async {
     var obj = {"name": name, "uid": uid};
     List<dynamic> friendList = [obj];
     await FirebaseFirestore.instance
-      .collection('users')
-      .doc(currentUser!.uid)
-      .update({'friends': FieldValue.arrayUnion(friendList)});
+        .collection('users')
+        .doc(currentUser!.uid)
+        .update({'friends': FieldValue.arrayUnion(friendList)});
     currentFriends.add(obj);
     addFriend = true;
     notifyListeners();
   }
 
   //get the users friends
-  Future<void> getFriendsList () async{
+  Future<void> getFriendsList() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
-    if(currentUser == null) return;
+    if (currentUser == null) return;
 
     await FirebaseFirestore.instance
-      .collection('users')
-      .doc(currentUser!.uid)
-      .get()
-      .then((DocumentSnapshot doc){
-        if(doc.exists) {
-          currentFriends = [];
-          for(var i in doc['friends']){
-            currentFriends.add({"name":i["name"] as String, "uid":i["uid"] as String});
-          }
+        .collection('users')
+        .doc(currentUser!.uid)
+        .get()
+        .then((DocumentSnapshot doc) {
+      if (doc.exists) {
+        currentFriends = [];
+        for (var i in doc['friends']) {
+          currentFriends
+              .add({"name": i["name"] as String, "uid": i["uid"] as String});
         }
-      });
+      }
+    });
     notifyListeners();
   }
 
   // FUNCTIONS FOR SHARING VAULTS -------------------------------------------*
 
   //Add a shared vault for the user
-  Future<void> addSharedUserToVault (String sharedUser, String sharedUserUid ,Vault vault){
-    var sharedUserList = [{"name": sharedUser, "uid":sharedUserUid}];
+  Future<void> addSharedUserToVault(
+      String sharedUser, String sharedUserUid, Vault vault) {
+    var sharedUserList = [
+      {"name": sharedUser, "uid": sharedUserUid}
+    ];
     return FirebaseFirestore.instance
-      .collection('vaults')
-      .doc(vault.name + '_' + currentUser!.uid)
-      .update({'sharedUsers': FieldValue.arrayUnion(sharedUserList)})
-      .then((value) => notifyListeners());
+        .collection('vaults')
+        .doc(vault.name + '_' + currentUser!.uid)
+        .update({'sharedUsers': FieldValue.arrayUnion(sharedUserList)}).then(
+            (value) => notifyListeners());
   }
 }
