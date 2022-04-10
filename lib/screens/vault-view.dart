@@ -21,7 +21,6 @@ class VaultView extends StatefulWidget {
 
 class _VaultViewState extends State<VaultView> {
   late TextEditingController controller;
-  bool _isEditMode = false;
   double iconSize = 20;
   List<dynamic> friendsList = [];
 
@@ -89,35 +88,16 @@ class _VaultViewState extends State<VaultView> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _isEditMode
-                  ? TextBoxSearch()
-                  : Text(
-                      widget.vault.name,
-                      textAlign: TextAlign.start,
-                      style: const TextStyle(fontSize: 25),
-                    ),
+              Text(
+                widget.vault.name,
+                textAlign: TextAlign.start,
+                style: const TextStyle(fontSize: 25),
+              ),
             ],
             mainAxisSize: MainAxisSize.min),
         centerTitle: false,
         actions: [
-          Padding(
-              padding: const EdgeInsets.all(10),
-              child: IconButton(
-                  onPressed: () => {
-                        setState(() {
-                          _isEditMode = !_isEditMode;
-                          if (_isEditMode) {
-                            iconSize = 15;
-                          } else {
-                            iconSize = 20;
-                          }
-                        }),
-                      },
-                  icon: !_isEditMode
-                      ? const Icon(Icons.search)
-                      : const Icon(Icons.close))),
           IconButton(
-            
             icon: const Icon(Icons.share),
             onPressed: () {
               if (widget.vaultIndex != -1) {
@@ -200,30 +180,4 @@ class _VaultViewState extends State<VaultView> {
               )
             ]),
       );
-}
-
-class TextBoxSearch extends StatelessWidget {
-  TextBoxSearch({Key? key}) : super(key: key);
-  final TextEditingController searchController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(seconds: 1),
-      curve: Curves.fastOutSlowIn,
-      alignment: Alignment.centerLeft,
-      height: 30,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(5.0),
-      ),
-      child: TextField(
-        controller: searchController,
-        decoration: const InputDecoration(
-            border: InputBorder.none,
-            hintText: 'Search',
-            hintStyle: TextStyle(fontSize: 15)),
-      ),
-    );
-  }
 }
