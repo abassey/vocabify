@@ -35,20 +35,23 @@ class _WordViewState extends State<WordView> {
     }
 
     Widget buildItem(String item, int index) {
-      return CheckboxListTile(
-        title: Text(item),
-        controlAffinity: ListTileControlAffinity.trailing,
-        value: selectedVaults.contains(vaultList[index]),
-        onChanged: (bool? value) {
-          setState(() {
-            if (value == true) {
-              selectedVaults.add(vaultList[index]);
-            } else {
-              selectedVaults.remove(vaultList[index]);
-            }
-          });
-        },
-      );
+      return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+        return CheckboxListTile(
+          title: Text(item),
+          controlAffinity: ListTileControlAffinity.trailing,
+          value: selectedVaults.contains(vaultList[index]),
+          onChanged: (bool? value) {
+            setState(() {
+              if (value == true) {
+                selectedVaults.add(vaultList[index]);
+              } else {
+                selectedVaults.remove(vaultList[index]);
+              }
+            });
+          },
+        );
+      });
     }
 
     return Scaffold(
