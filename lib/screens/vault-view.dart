@@ -173,7 +173,7 @@ class _VaultViewState extends State<VaultView> {
               child: Text(friendsList[i]["name"] as String, style: const TextStyle(fontSize: 18)),
               onPressed: (){
                 Provider.of<AppProvider>(context, listen: false)
-                  .addSharedUserToVault (friendsList[i]["name"] as String, widget.vault);
+                  .addSharedUserToVault (friendsList[i]["name"] as String,friendsList[i]["uid"] as String ,widget.vault);
                 Navigator.of(context).pop();
               },
             )
