@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vocabify/data/vault.dart';
+import 'package:vocabify/providers/app_provider.dart';
 import 'vault-view.dart';
 import 'dart:math';
 
@@ -52,9 +54,15 @@ class _FriendsAccountState extends State<FriendsAccount> {
                   size: 30,
                   color: (friendState == true) ? Colors.blue : Colors.red[900]),
               onPressed: () {
-                setState(() {
-                  friendState = !friendState;
-                });
+                if(friendState){
+                  String uid = Provider.of<AppProvider>(context, listen: false).getFriend(widget.name);
+                  Provider.of<AppProvider>(context, listen: false).deleteFriend(uid);
+                  setState(() {
+                    friendState = false;
+                  });
+                }else{
+                  
+                }
               },
             ),
             Padding(

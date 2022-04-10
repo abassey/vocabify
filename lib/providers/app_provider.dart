@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:ffi';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -21,6 +22,7 @@ class AppProvider extends ChangeNotifier {
   String? _displayName;
   String? get name => _displayName;
   bool addFriend = false;
+  bool hasFriend = false;
 
   StreamSubscription<QuerySnapshot>? _vaultItemSubscription;
 
@@ -347,7 +349,7 @@ class AppProvider extends ChangeNotifier {
         .then((QuerySnapshot querySnapshot) async {
       for (var doc in querySnapshot.docs) {
         if (friendEmail == doc["email"] && friendEmail != currentUser!.email) {
-          await listUpdater(doc["name"], doc["uid"]);
+          await friendUpdater(doc["name"], doc["uid"]);
           return;
         }
       }
@@ -357,7 +359,7 @@ class AppProvider extends ChangeNotifier {
   }
 
   //update user collection with new friends
-  Future<void> listUpdater (String name, String uid) async{
+  Future<void> friendUpdater (String name, String uid) async{
     var obj = {"name": name, "uid": uid};
     List<dynamic> fl1 = [obj];
     var obj2 = {"name": currentUser!.displayName, "uid": currentUser!.uid};
@@ -371,8 +373,16 @@ class AppProvider extends ChangeNotifier {
       .collection('users')
       .doc(uid)
       .update({'friends': FieldValue.arrayUnion(fl2)});
-    currentFriends.add(obj);
+
+    //check if they already have friend - contains doesnt work bc some type issue
+    for(int i = 0; i < currentFriends.length; i++){
+      if(currentFriends[i]['uid'] == obj['uid']){
+        hasFriend = true;
+      }
+    }
+    if(!hasFriend)currentFriends.add(obj);
     addFriend = true;
+    hasFriend = false;
     notifyListeners();
   }
 
@@ -398,6 +408,36 @@ class AppProvider extends ChangeNotifier {
       }
     });
     notifyListeners();
+  }
+
+  Future<void> deleteFriend(String uid) async{
+    List<dynamic> otherPersonFriendList = [];
+    currentFriends.removeWhere((element) => element['uid'] == uid);
+    await FirebaseFirestore.instance
+      .collection('users')
+      .doc(currentUser!.uid)
+      .update({'friends': currentFriends});
+    await FirebaseFirestore.instance
+      .collection('users')
+      .doc(uid)
+      .get()
+      .then((value) => otherPersonFriendList = value['friends']);
+    otherPersonFriendList.removeWhere((element) => element['uid'] == currentUser!.uid);
+    await FirebaseFirestore.instance
+      .collection('users')
+      .doc(uid)
+      .update({'friends': otherPersonFriendList});
+    notifyListeners();
+  }
+
+
+  String getFriend(String name){
+    for(var friend in currentFriends){
+      if(friend['name'] as String == name){
+        return friend['uid'] as String;
+      }
+    }
+    return '';
   }
 
   // FUNCTIONS FOR SHARING VAULTS -------------------------------------------*
