@@ -2,9 +2,7 @@ import 'package:vocabify/data/vault.dart';
 
 import 'package:vocabify/data/dictapi.dart';
 
-
 class VaultHandlerAPI {
-
   VaultHandlerAPI({
     required this.vault,
   });
@@ -12,42 +10,26 @@ class VaultHandlerAPI {
   late Vault vault;
 
   //Handle the addition of a word to the vault in the database
-  void addWordtoVault(DictItem word, int vaultIndex){
-    if(this.vault != null){
-      vault.addDictItem(word);
-      // Add the word to the vault database
-    }else{
-      // Error Handling
-    }
+  void addWordtoVault(DictItem word, int vaultIndex) {
+    vault.addDictItem(word);
+    // Add the word to the vault database
   }
 
   //Handle the removal of a word to the vault in the database
-  void removeWordFromVault(int index){
-    if(this.vault != null){
-      vault.removeDictItem(index);
-      // Remove word from the vault database
-    }else{
-      // Error Handling
-    }
+  void removeWordFromVault(Vault vault, String toRemove) {
+    vault.vaultitems.removeWhere((element) => element.word == toRemove);
+    // Remove word from the vault database
   }
 
   //Handle the deletion of a vault
-  void deleteVault(){
-    if(this.vault != null){
-      // Delete Object from database
-      this.vault == null;
-    }else{
-      // Error Handling
-    }
+  void deleteVault() {
+    // Delete Object from database
+    this.vault == null;
   }
 
   //Handle the creation of a vault
-  void createVault(String vaultname){
-    if(this.vault == null){
-      this.vault.name = vaultname;
-      // Add new empty vault to the database
-    } else {
-      // Error Handling
-    }
+  void createVault(String vaultname) {
+    this.vault.name = vaultname;
+    // Add new empty vault to the database
   }
 }

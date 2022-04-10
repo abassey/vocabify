@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vocabify/data/vault.dart';
+import '../providers/app_provider.dart';
 import 'game.dart';
+import 'match_game.dart';
 
 class GameView extends StatefulWidget {
   const GameView({Key? key,}) : super(key: key);
@@ -14,14 +18,25 @@ class _GameViewState extends State<GameView> {
   List<Game> games = [];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { 
     return Scaffold(
-      appBar: SearchBar(),
-      body: GameViewContainer(),
+      // appBar: SearchBar(),
+      // body: GameViewContainer(),
+      //there is only one game right now
+      body: MatchGameView(vault: Provider.of<AppProvider>(context).vaults.first, vaultIndex: -1),
     );
   }
 
-  // Overall body container in the gameview
+  //skeleton concept for a vault selection; make future?
+  MatchGameView _selectVault(context){
+    List<Vault> vault = context.vaults;
+    var input = 0;
+    //user selection
+    return MatchGameView(vault: vault[input], vaultIndex: -1);
+  }
+
+
+  // Overall body container in the gameview; game selector
   Widget GameViewContainer() {
     return Container(
       child: _buildRow(),
