@@ -3,9 +3,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-DictAPI DictAPIFromJson(String str) => DictAPI.fromJson(json.decode(str).map((x) => DictAPI.fromJson(x)));
-String DictAPItoJson(List<DictAPI> data) => json.encode(List<DictAPI>.from(data.map((x) => json.encode(x))));
-
+DictAPI dictAPIFromJson(String str) =>
+    DictAPI.fromJson(json.decode(str).map((x) => DictAPI.fromJson(x)));
+String dictAPItoJson(List<DictAPI> data) =>
+    json.encode(List<DictAPI>.from(data.map((x) => json.encode(x))));
 
 class DictAPI {
   DictAPI({
@@ -31,31 +32,30 @@ class DictAPI {
   * DictAPI object
    */
   factory DictAPI.fromJson(Map<String, dynamic> json) => DictAPI(
-    word: json["word"],
-    phonetics: json["phonetics"],
-    meanings: json["meanings"],
-  );
+        word: json["word"],
+        phonetics: json["phonetics"],
+        meanings: json["meanings"],
+      );
 
   /*
   * Retrieves the actual DictItem from the current
   * instance of DictAPI
    */
-  getDictItem(){
+  getDictItem() {
     List<String> definitions = [];
     List<String> synonymslist = [];
     for (var element in meanings) {
-      element["definitions"].forEach((item){
-        item["synonyms"].forEach((thing){
+      element["definitions"].forEach((item) {
+        item["synonyms"].forEach((thing) {
           synonymslist.add(thing);
         });
 
         definitions.add(item["definition"]);
-
       });
     }
-    return DictItem(word: word, definitions: definitions, synonyms: synonymslist);
+    return DictItem(
+        word: word, definitions: definitions, synonyms: synonymslist);
   }
-
 }
 
 class DictItem {
@@ -67,7 +67,6 @@ class DictItem {
   late String word;
   late List<String> definitions;
   late List<String> synonyms;
-
 }
 
 class Definitions {
@@ -100,4 +99,3 @@ class Meanings {
   late String partofspeech;
   late List<Definitions> definitions;
 }
-

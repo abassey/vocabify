@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:vocabify/data/dictapi.dart';
 import 'package:vocabify/data/httpget.dart';
 import 'package:vocabify/data/vault.dart';
-import 'package:vocabify/data/vaulthandling.dart';
 import 'word-view.dart';
 import 'package:provider/provider.dart';
-import '../providers/vault_provider.dart';
 import '../providers/app_provider.dart';
 import '../data/vault.dart';
 import '../data/dictapi.dart';
+import '../extensions/string_extensions.dart';
 
 class VaultView extends StatefulWidget {
-  const VaultView({Key? key, required this.vault, required this.vaultIndex}) : super(key: key);
+  const VaultView({Key? key, required this.vault, required this.vaultIndex})
+      : super(key: key);
   final Vault vault;
   final int vaultIndex;
 
@@ -28,7 +28,7 @@ class _VaultViewState extends State<VaultView> {
   Widget _buildRow(index) {
     return ListTile(
       title: Text(
-        widget.vault.vaultitems[index].word,
+        widget.vault.vaultitems[index].word.toTitleCase(),
         style: const TextStyle(fontSize: 20),
       ),
       trailing: const Icon(Icons.arrow_forward_ios),
@@ -37,8 +37,10 @@ class _VaultViewState extends State<VaultView> {
             context,
             MaterialPageRoute(
                 builder: (context) => WordView(
-                    word: widget.vault.vaultitems[
-                        index]))); //this should change to dicttime to get the list of meanings and phonetics
+                      word: widget.vault.vaultitems[index],
+                      vaultIndex: widget.vaultIndex,
+                      isPeek: true,
+                    )));
       },
     );
   }
@@ -58,16 +60,15 @@ class _VaultViewState extends State<VaultView> {
 
   int getVaultItemCount() {
     return widget.vault.vaultitems.length +
-            (widget.vault.vaultitems.length - 1 < 0
-                ? 0
-                : widget.vault.vaultitems.length - 1);
+        (widget.vault.vaultitems.length - 1 < 0
+            ? 0
+            : widget.vault.vaultitems.length - 1);
   }
 
   @override
   Widget build(BuildContext context) {
-    final vault_provider = Provider.of<VaultProvider>(context);
-    final app_provider = Provider.of<AppProvider>(context);
-    friendsList = app_provider.currentFriends;
+    final appProvider = Provider.of<AppProvider>(context);
+    friendsList = appProvider.currentFriends;
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -76,7 +77,7 @@ class _VaultViewState extends State<VaultView> {
           final word = await openDialog();
           if (word == null || word.isEmpty) return;
           DictItem toAdd = await HttpGet(word: word).loadDictItem();
-          app_provider.addVaultItems(widget.vaultIndex, toAdd);
+          appProvider.addVaultItem(widget.vaultIndex, toAdd);
         },
       ),
       appBar: AppBar(
@@ -85,7 +86,7 @@ class _VaultViewState extends State<VaultView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _isEditMode
-                  ? const TextBoxSearch()
+                  ? TextBoxSearch()
                   : Text(
                       widget.vault.name,
                       textAlign: TextAlign.start,
@@ -161,38 +162,42 @@ class _VaultViewState extends State<VaultView> {
 
   //This is the screen for sharing the vault your in with a friend
   Future openShareVault() => showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text('Share Vault With:'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for(int i = 0; i < friendsList.length; i++)
-            ElevatedButton(
-              child: Text(friendsList[i]["name"] as String, style: const TextStyle(fontSize: 18)),
-              onPressed: (){
-                Provider.of<AppProvider>(context, listen: false)
-                  .addSharedUserToVault (friendsList[i]["name"] as String,friendsList[i]["uid"] as String ,widget.vault);
-                Navigator.of(context).pop();
-              },
-            )
-        ],
-      ),
-      actions: [
-        TextButton(
-          child: const Text('Cancel', style: TextStyle(fontSize: 18)),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        )
-      ]
-    ),
-  );
+        context: context,
+        builder: (context) => AlertDialog(
+            title: const Text('Share Vault With:'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (int i = 0; i < friendsList.length; i++)
+                  ElevatedButton(
+                    child: Text(friendsList[i]["name"] as String,
+                        style: const TextStyle(fontSize: 18)),
+                    onPressed: () {
+                      Provider.of<AppProvider>(context, listen: false)
+                          .addSharedUserToVault(
+                              friendsList[i]["name"] as String,
+                              friendsList[i]["uid"] as String,
+                              widget.vault);
+                      Navigator.of(context).pop();
+                    },
+                  )
+              ],
+            ),
+            actions: [
+              TextButton(
+                child: const Text('Cancel', style: TextStyle(fontSize: 18)),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ]),
+      );
 }
 
 class TextBoxSearch extends StatelessWidget {
-  const TextBoxSearch({Key? key}) : super(key: key);
+  TextBoxSearch({Key? key}) : super(key: key);
+  final TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -205,8 +210,9 @@ class TextBoxSearch extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(5.0),
       ),
-      child: const TextField(
-        decoration: InputDecoration(
+      child: TextField(
+        controller: searchController,
+        decoration: const InputDecoration(
             border: InputBorder.none,
             hintText: 'Search',
             hintStyle: TextStyle(fontSize: 15)),
