@@ -1,3 +1,4 @@
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -17,7 +18,9 @@ class MatchGameView extends StatefulWidget {
 
 class _MatchGameViewState extends State<MatchGameView> {
   int currentScore = 0;
+  int finalScore = 0;
   int matchPlayed = 0;
+  List<String> usedWords = [];
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +41,16 @@ class _MatchGameViewState extends State<MatchGameView> {
 
   DictItem getRandomWord(List<DictItem> vaultItems){
     final random = Random();
-    var i = random.nextInt(vaultItems.length);
+    var validWord = false;
+    var i = 0;
+
+    while (!validWord){
+      if (!usedWords.contains(vaultItems[i])){
+        i = random.nextInt(vaultItems.length);
+        validWord = true;
+      }
+    }
+
     return vaultItems[i];
   }
 
@@ -67,6 +79,7 @@ class _MatchGameViewState extends State<MatchGameView> {
           options.add(temp);
         }
       }
+      options.removeLast();
     }
     return options;
   }
@@ -76,6 +89,7 @@ class _MatchGameViewState extends State<MatchGameView> {
     DictItem mainWord = getRandomWord(widget.vault.vaultitems);
     List<String> wordOptions = getFalseOptions(mainWord.word, widget.vault.vaultitems);
     wordOptions.insert(Random().nextInt(wordOptions.length),mainWord.word);
+    usedWords.add(mainWord.word);
 
     return Container(
       child: Column(
@@ -102,7 +116,7 @@ class _MatchGameViewState extends State<MatchGameView> {
           Padding(
             padding: EdgeInsets.all(8.0),
             child: Center(
-              //definition of main word is the question
+              //definition of main word is the question; definition selected at random from options
               child: Text( 
                 mainWord.definitions.elementAt(Random().nextInt(mainWord.definitions.length)),
                 style: TextStyle(fontSize: 22,),
@@ -110,29 +124,11 @@ class _MatchGameViewState extends State<MatchGameView> {
                 )
             ),
           ),
-          Column(
-            children: [
-              Row(
-                //word options
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children:[
-                  optionButton(style, wordOptions[1], (wordOptions[1]==mainWord.word)),
-                  optionButton(style, wordOptions[2], (wordOptions[2]==mainWord.word)),
-                  optionButton(style, wordOptions[3], (wordOptions[3]==mainWord.word)),
-                ]
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  optionButton(style, wordOptions[4], (wordOptions[4]==mainWord.word)),
-                  optionButton(style, wordOptions[5], (wordOptions[5]==mainWord.word)),
-                ],
-              ),
-            ],
-          ),
-        ],
+          Wrap(
+            alignment: WrapAlignment.center,
+            children: List.generate(wordOptions.length, (index) => optionButton(style, wordOptions[index], (wordOptions[index]==mainWord.word)))  
+          ),          
+        ]
       ),
     );
   }
@@ -148,7 +144,7 @@ class _MatchGameViewState extends State<MatchGameView> {
               children: [
                 Text(
                   "Score:  "+currentScore.toString()+"/5", 
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 21),
                 )
               ],
           ),
@@ -167,11 +163,23 @@ class _MatchGameViewState extends State<MatchGameView> {
             setState(() {
               currentScore++;
               matchPlayed++;
+              if (matchPlayed >= 5){
+                finalScore = currentScore;
+                currentScore = 0;
+                matchPlayed = 0; 
+                gameOver();
+              }
             });
             print("Correct!");
           } else {
             setState(() {
               matchPlayed++;
+              if (matchPlayed >= 5){
+                finalScore = currentScore;
+                currentScore = 0;
+                matchPlayed = 0; 
+                gameOver();
+              }
             });
           }
         },
@@ -179,4 +187,39 @@ class _MatchGameViewState extends State<MatchGameView> {
       ),
     );
   }
+
+  Future gameOver() => showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Great Job!', textAlign: TextAlign.center, style: TextStyle(fontSize: 25),),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children:[
+          Text(
+            finalScore.toString()+"/5",
+            style: TextStyle(fontSize: 48, fontWeight: FontWeight.w600),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4,10,4,0),
+            child: Text(
+              "Total Games Won: ", //if 3/5 or over add to this which is the score object
+              style:  TextStyle(fontSize: 22),
+            ),
+          )
+        ]
+      ),
+      actions: [
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: TextButton(
+            child: const Text('Play Again', textAlign: TextAlign.center, style: TextStyle(fontSize: 20),),
+            onPressed: () => Navigator.pop(context),
+          ),
+        )
+      ]),
+
+  );
+
+
 }
