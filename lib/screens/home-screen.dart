@@ -130,22 +130,11 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.all(10.0),
               child: GestureDetector(
                 onTap: () {
-                  List<DictItem> coreVaultItems = [];
-                  for (var vault in appProvider.vaults) {
-                    for (var item in vault.vaultitems) {
-                      coreVaultItems.add(item);
-                    }
-                  }
-                  Vault coreVault = Vault(
-                      uid: "core",
-                      name: "All Words",
-                      vaultitems: coreVaultItems,
-                      fbusers: []);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => VaultView(
-                              vault: coreVault,
+                              vault: Provider.of<AppProvider>(context).coreVault,
                               vaultIndex:
                                   -1))); //add provider of to this line ot save the words in this vault
                 },

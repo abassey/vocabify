@@ -77,7 +77,11 @@ class _VaultViewState extends State<VaultView> {
           final word = await openDialog();
           if (word == null || word.isEmpty) return;
           DictItem toAdd = await HttpGet(word: word).loadDictItem();
-          appProvider.addVaultItem(widget.vaultIndex, toAdd);
+          if (widget.vaultIndex != -1) {
+            appProvider.addVaultItem(widget.vaultIndex, toAdd);
+          }
+          appProvider.addCoreVaultItem(toAdd);
+          // appProvider.updateFireStoreCoreVault();
         },
       ),
       appBar: AppBar(
@@ -113,9 +117,12 @@ class _VaultViewState extends State<VaultView> {
                       ? const Icon(Icons.search)
                       : const Icon(Icons.close))),
           IconButton(
+            
             icon: const Icon(Icons.share),
             onPressed: () {
-              openShareVault();
+              if (widget.vaultIndex != -1) {
+                openShareVault();
+              }
             },
           )
         ],
