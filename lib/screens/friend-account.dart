@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vocabify/data/vault.dart';
+import 'package:vocabify/providers/app_provider.dart';
 import 'vault-view.dart';
 import 'dart:math';
 
@@ -18,7 +20,6 @@ class _FriendsAccountState extends State<FriendsAccount> {
   final double backDropHeight = 200;
   final double profileHeight = 144;
   bool friendState = true;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,9 +53,19 @@ class _FriendsAccountState extends State<FriendsAccount> {
                   size: 30,
                   color: (friendState == true) ? Colors.blue : Colors.red[900]),
               onPressed: () {
-                setState(() {
-                  friendState = !friendState;
-                });
+                if(friendState){
+                  String uid = Provider.of<AppProvider>(context, listen: false).getFriend(widget.name);
+                  Provider.of<AppProvider>(context, listen: false).deleteFriend(uid);
+                  setState(() {
+                    friendState = false;
+                  });
+                }else{
+                  String uid = Provider.of<AppProvider>(context, listen: false).friendUid;
+                  Provider.of<AppProvider>(context, listen: false).friendUpdater(widget.name, uid);
+                  setState(() {
+                    friendState = true;
+                  });
+                }
               },
             ),
             Padding(
