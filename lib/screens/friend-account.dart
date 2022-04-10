@@ -22,7 +22,7 @@ class _FriendsAccountState extends State<FriendsAccount> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text(widget.name + ' Profile')),
+        appBar: AppBar(title: Text(widget.name + '\'s Profile')),
         body: ListView(
           children: [
             buildTop(),
@@ -87,7 +87,7 @@ class _FriendsAccountState extends State<FriendsAccount> {
   Widget buildVault() {
     return GestureDetector(
       onTap: () {
-        Vault vault = Vault(name: "Vault View", vaultitems: [], fbusers: []);
+        Vault vault = Vault(uid:'', name: "Vault View", vaultitems: [], fbusers: []);
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => VaultView(vault: vault, vaultIndex: -1)));
       },
