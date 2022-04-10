@@ -364,7 +364,6 @@ class AppProvider extends ChangeNotifier {
 
   // Adding the core vault in firestore
   Future<void> addCoreVaultToFireStore() {
-    print(currentUser!.uid);
     return FirebaseFirestore.instance
         .collection('vaults')
         .doc("CoreVault_" + currentUser!.uid)
@@ -401,9 +400,7 @@ class AppProvider extends ChangeNotifier {
     _coreVaultItemSet.addAll(vault.vaultitems);
     _coreVault.vaultitems = _coreVaultItemSet.toList();
     List<dynamic> saveList = createSavableWordList(_coreVault);
-    for (final item in saveList) {
-      print(item['word']);
-    }
+
     return FirebaseFirestore.instance
         .collection('vaults')
         .doc("CoreVault_" + currentUser!.uid)
