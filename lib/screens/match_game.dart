@@ -39,19 +39,10 @@ class _MatchGameViewState extends State<MatchGameView> {
     );
   }
 
-  DictItem getRandomWord(List<DictItem> vaultItems){
+  DictItem getRandomWord(List<DictItem> vaultItems) {
     final random = Random();
     var validWord = false;
-    var i = 0;
-    print(vaultItems.length);
-    while (!validWord) {
-      if (!usedWords.contains(vaultItems[i])){
-        i = random.nextInt(vaultItems.length);
-        validWord = true;
-      }
-    }
-
-    return vaultItems[i];
+    return vaultItems[random.nextInt(vaultItems.length)];
   }
 
   int getVaultItemCount() {
@@ -67,18 +58,14 @@ class _MatchGameViewState extends State<MatchGameView> {
     List<String> options = [];
     String temp;
     if (getVaultItemCount() < 5 && getVaultItemCount() != 0) {
-      while (options.length < getVaultItemCount() - 1){
+      while (options.length < getVaultItemCount()) {
         temp = getRandomWord(vaultItems).word;
-        if (temp != answer && !options.contains(temp)) {
-          options.add(temp);
-        }
+        options.add(temp);
       }
     } else {
-      while (options.length < 5){
+      while (options.length < 5) {
         temp = getRandomWord(vaultItems).word;
-        if (temp != answer && !options.contains(temp)) {
-          options.add(temp);
-        }
+        options.add(temp);
       }
       options.removeLast();
     }
@@ -87,9 +74,6 @@ class _MatchGameViewState extends State<MatchGameView> {
 
   Widget GameContainer() {
     final app_provider = Provider.of<AppProvider>(context);
-    final ButtonStyle style = ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
-    DictItem mainWord = getRandomWord(app_provider.coreVault.vaultitems);
-    List<String> wordOptions = getFalseOptions(mainWord.word, app_provider.coreVault.vaultitems);
 
     if (app_provider.coreVault.vaultitems.isEmpty){
       return Container(
@@ -99,51 +83,56 @@ class _MatchGameViewState extends State<MatchGameView> {
           style: TextStyle(fontSize: 32),
         ),
       );
-    }
+    } else {
+      final ButtonStyle style = ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
+      DictItem mainWord = getRandomWord(app_provider.coreVault.vaultitems);
+      List<String> wordOptions = getFalseOptions(mainWord.word, app_provider.coreVault.vaultitems);
 
-    wordOptions.add(mainWord.word);
-    usedWords.add(mainWord.word);
+      wordOptions.add(mainWord.word);
+      usedWords.add(mainWord.word);
 
-    return Container(
-      child: Column(
-        children: [
-          //current score; 1 game = 5 definitions?
-          scoreTracker(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: Text(
-                    "Select the answer that best fits the given definition",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                    ),
+      return Container(
+        child: Column(
+          children: [
+            //current score; 1 game = 5 definitions?
+            scoreTracker(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: Text(
+                      "Select the answer that best fits the given definition",
+                      style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                      ),
+                  ),
                 ),
-              ),
-            ],
-            
-          ),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Center(
-              //definition of main word is the question; definition selected at random from options
-              child: Text( 
-                mainWord.definitions.elementAt(Random().nextInt(mainWord.definitions.length)),
-                style: TextStyle(fontSize: 22,),
-                textAlign: TextAlign.center,
-                )
+              ],
+              
             ),
-          ),
-          Wrap(
-            alignment: WrapAlignment.center,
-            children: List.generate(wordOptions.length, (index) => optionButton(style, wordOptions[index], (wordOptions[index]==mainWord.word)))  
-          ),          
-        ]
-      ),
-    );
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Center(
+                //definition of main word is the question; definition selected at random from options
+                child: Text( 
+                  mainWord.definitions.elementAt(Random().nextInt(mainWord.definitions.length)),
+                  style: TextStyle(fontSize: 22,),
+                  textAlign: TextAlign.center,
+                  )
+              ),
+            ),
+            Wrap(
+              alignment: WrapAlignment.center,
+              children: List.generate(wordOptions.length, (index) => optionButton(style, wordOptions[index], (wordOptions[index]==mainWord.word)))  
+            ),          
+          ]
+        ),
+      );
+
+    }
   }
 
   Row scoreTracker() {
