@@ -27,8 +27,6 @@ class _GameViewState extends State<GameView> {
             ),
       ),
       body: GameViewContainer(),
-      //there is only one game right now
-      //body: MatchGameView(vault: Provider.of<AppProvider>(context).coreVault, vaultIndex: -1),
     );
   }
 
@@ -72,17 +70,23 @@ class _GameViewState extends State<GameView> {
       child: _buildRow(),
     );
   }
+  //there is only one game right now
   Widget _buildRow() {
-    return ListTile(
-      leading: const Text("Definition Match",
-          textScaleFactor: 1.6,
-          style: TextStyle(fontWeight: FontWeight.bold)),
-      // title: const Text(
-      //   "Played 10 times",
-      //   textScaleFactor: 1.3,
-      //   textAlign: TextAlign.right,
-      // ),
-      onTap: () => _enterGame(),
+    return ListBody(
+      children: 
+        [
+          ListTile(
+          leading: const Text("Definition Match",
+              textScaleFactor: 1.6,
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          // title: const Text(
+          //   winsCounter+" Wins",
+          //   textScaleFactor: 1.3,
+          //   textAlign: TextAlign.right,
+          // ),
+          onTap: () => _enterGame(),
+        ),
+      ],
     );
   }
   // The AppBar widget in gameview
