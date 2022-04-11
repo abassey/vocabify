@@ -134,7 +134,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => VaultView(
-                              vault: Provider.of<AppProvider>(context).coreVault,
+                              vault:
+                                  Provider.of<AppProvider>(context).coreVault,
                               vaultIndex:
                                   -1))); //add provider of to this line ot save the words in this vault
                 },
@@ -142,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: 500,
                   height: 150,
                   decoration: const BoxDecoration(
-                      color: Colors.teal,
+                      color: Color.fromARGB(255, 28, 89, 121),
                       borderRadius: BorderRadius.all(Radius.circular(20))),
                   child: const Align(
                       alignment: Alignment.center,

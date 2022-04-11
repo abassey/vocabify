@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
           title: 'Vocabify',
           theme: ThemeData(
             primarySwatch: Colors.deepPurple,
+            primaryColor: Colors.deepPurple[300],
           ),
           home: Consumer<AppProvider>(
               builder: (context, appState, _) => appState.loginState !=

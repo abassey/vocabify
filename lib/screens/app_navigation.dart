@@ -38,7 +38,8 @@ class _AppNavigationState extends State<AppNavigation> {
         onTap: (index) => setState(() => currentIndex = index),
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.deepPurple[300],
-        selectedItemColor: Colors.white,
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.white70,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.lock),
