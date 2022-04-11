@@ -24,6 +24,7 @@ class AppProvider extends ChangeNotifier {
   bool addFriend = false;
   bool hasFriend = false;
   String friendUid = '';
+  int wordsLearned = 0;
 
   StreamSubscription<QuerySnapshot>? _vaultItemSubscription;
 
@@ -193,6 +194,7 @@ class AppProvider extends ChangeNotifier {
                       .toList()))
               .toList();
           _coreVaultItemSet = items.toSet();
+          wordsLearned = items.length;
           _coreVault = Vault(
               name: document['name'] as String,
               vaultitems: items,
@@ -288,7 +290,7 @@ class AppProvider extends ChangeNotifier {
           await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
       if (methods.contains('password')) {
         _loginState = ApplicationLoginState.password;
-      } else {
+      } else {  
         _loginState = ApplicationLoginState.register;
       }
       _email = email;
@@ -343,6 +345,7 @@ class AppProvider extends ChangeNotifier {
     _loginState = ApplicationLoginState.emailAddress;
     currentUser = null;
     currentFriends = [];
+    wordsLearned = 0;
     FirebaseAuth.instance.signOut();
     notifyListeners();
   }
@@ -418,6 +421,7 @@ class AppProvider extends ChangeNotifier {
       'name': currentUser!.displayName,
       'email': currentUser!.email,
       'uid': currentUser!.uid,
+      'wordsLearned': 0,
       'friends': [],
     });
   }

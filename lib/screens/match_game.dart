@@ -3,14 +3,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:vocabify/data/dictapi.dart';
+import 'package:provider/provider.dart';
+import '../providers/app_provider.dart';
 import '../data/vault.dart';
 import 'game.dart';
 
 
 class MatchGameView extends StatefulWidget {
-  const MatchGameView({Key? key, required this.vault, required this.vaultIndex}) : super(key: key);
-  final Vault vault;
-  final int vaultIndex;
+  const MatchGameView({Key? key}) : super(key: key);
 
   @override
   State<MatchGameView> createState() => _MatchGameViewState();
@@ -39,45 +39,40 @@ class _MatchGameViewState extends State<MatchGameView> {
     );
   }
 
-  DictItem getRandomWord(List<DictItem> vaultItems){
+  DictItem getRandomWord(List<DictItem> vaultItems) {
     final random = Random();
     var validWord = false;
-    var i = 0;
-
-    while (!validWord){
-      if (!usedWords.contains(vaultItems[i])){
-        i = random.nextInt(vaultItems.length);
-        validWord = true;
-      }
+    var retry = 0;
+    DictItem word = vaultItems[random.nextInt(vaultItems.length)];
+    while( usedWords.contains(word.word) && retry < 10) {
+      word = vaultItems[random.nextInt(vaultItems.length)];
+      retry++;
     }
-
-    return vaultItems[i];
+    usedWords.add(word.word);
+    return word;
   }
 
   int getVaultItemCount() {
-    return widget.vault.vaultitems.length +
-            (widget.vault.vaultitems.length - 1 < 0
+    final app_provider = Provider.of<AppProvider>(context);
+    return app_provider.coreVault.vaultitems.length +
+            (app_provider.coreVault.vaultitems.length - 1 < 0
                 ? 0
-                : widget.vault.vaultitems.length - 1);
+                : app_provider.coreVault.vaultitems.length - 1);
   }
 
   //generate a list of other words from the vault besides the answer to populate other options
   List<String> getFalseOptions(answer, vaultItems){
     List<String> options = [];
     String temp;
-    if (getVaultItemCount() < 5) {
-      while (options.length < getVaultItemCount() - 1){
+    if (getVaultItemCount() < 10 && getVaultItemCount() != 0) {
+      while (options.length < getVaultItemCount()) {
         temp = getRandomWord(vaultItems).word;
-        if (temp != answer && !options.contains(temp)) {
-          options.add(temp);
-        }
+        options.add(temp);
       }
     } else {
-      while (options.length < 5){
+      while (options.length < 10) {
         temp = getRandomWord(vaultItems).word;
-        if (temp != answer && !options.contains(temp)) {
-          options.add(temp);
-        }
+        options.add(temp);
       }
       options.removeLast();
     }
@@ -85,52 +80,66 @@ class _MatchGameViewState extends State<MatchGameView> {
   }
 
   Widget GameContainer() {
-    final ButtonStyle style = ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
-    DictItem mainWord = getRandomWord(widget.vault.vaultitems);
-    List<String> wordOptions = getFalseOptions(mainWord.word, widget.vault.vaultitems);
-    wordOptions.insert(Random().nextInt(wordOptions.length),mainWord.word);
-    usedWords.add(mainWord.word);
+    final app_provider = Provider.of<AppProvider>(context);
 
-    return Container(
-      child: Column(
-        children: [
-          //current score; 1 game = 5 definitions?
-          scoreTracker(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: Text(
-                    "Select the answer that best fits the given definition",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                    ),
+    if (app_provider.coreVault.vaultitems.isEmpty || app_provider.coreVault.vaultitems.length < 10){
+      return Container(
+        child: const Text(
+          "No words in vault.\n Look up some words and come back to try them out! You need at least 10 words!",
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 32),
+        ),
+      );
+    } else {
+      final ButtonStyle style = ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
+      DictItem mainWord = getRandomWord(app_provider.coreVault.vaultitems);
+      List<String> wordOptions = getFalseOptions(mainWord.word, app_provider.coreVault.vaultitems);
+
+      wordOptions.add(mainWord.word);
+      usedWords.add(mainWord.word);
+
+      return Container(
+        child: Column(
+          children: [
+            //current score; 1 game = 5 definitions?
+            scoreTracker(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: Text(
+                      "Select the answer that best fits the given definition",
+                      style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                      ),
+                  ),
                 ),
-              ),
-            ],
-            
-          ),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Center(
-              //definition of main word is the question; definition selected at random from options
-              child: Text( 
-                mainWord.definitions.elementAt(Random().nextInt(mainWord.definitions.length)),
-                style: TextStyle(fontSize: 22,),
-                textAlign: TextAlign.center,
-                )
+              ],
+              
             ),
-          ),
-          Wrap(
-            alignment: WrapAlignment.center,
-            children: List.generate(wordOptions.length, (index) => optionButton(style, wordOptions[index], (wordOptions[index]==mainWord.word)))  
-          ),          
-        ]
-      ),
-    );
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Center(
+                //definition of main word is the question; definition selected at random from options
+                child: Text( 
+                  mainWord.definitions.elementAt(Random().nextInt(mainWord.definitions.length)),
+                  style: TextStyle(fontSize: 22,),
+                  textAlign: TextAlign.center,
+                  )
+              ),
+            ),
+            Wrap(
+              alignment: WrapAlignment.center,
+              children: List.generate(wordOptions.length, (index) => optionButton(style, wordOptions[index], (wordOptions[index]==mainWord.word)))  
+            ),          
+          ]
+        ),
+      );
+
+    }
   }
 
   Row scoreTracker() {
@@ -200,13 +209,15 @@ class _MatchGameViewState extends State<MatchGameView> {
             finalScore.toString()+"/5",
             style: TextStyle(fontSize: 48, fontWeight: FontWeight.w600),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(4,10,4,0),
-            child: Text(
-              "Total Games Won: ", //if 3/5 or over add to this which is the score object
-              style:  TextStyle(fontSize: 22),
-            ),
-          )
+          
+          // TODO: Implement win count
+          // Padding(
+          //   padding: const EdgeInsets.fromLTRB(4,10,4,0),
+          //   child: Text(
+          //     "Total Games Won: ", //if 3/5 or over add to this which is the score object
+          //     style:  TextStyle(fontSize: 22),
+          //   ),
+          // )
         ]
       ),
       actions: [

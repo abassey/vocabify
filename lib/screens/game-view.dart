@@ -21,44 +21,62 @@ class _GameViewState extends State<GameView> {
 
   @override
   Widget build(BuildContext context) {
+    final app_provider = Provider.of<AppProvider>(context).coreVault;
     return Scaffold(
-      // appBar: SearchBar(),
-      // body: GameViewContainer(),
-      //there is only one game right now
-      body: MatchGameView(
-          vault: Provider.of<AppProvider>(context).vaults.first,
-          vaultIndex: -1),
-    );
-  }
-
-  //skeleton concept for a vault selection; make future?
-  MatchGameView _selectVault(context) {
-    List<Vault> vault = context.vaults;
-    var input = 0;
-    //user selection
-    return MatchGameView(vault: vault[input], vaultIndex: -1);
-  }
-
-  // Overall body container in the gameview; game selector
-  Widget GameViewContainer() {
-    return Container(
-      child: _buildRow(),
-    );
-  }
-
-  Widget _buildRow() {
-    return ListTile(
-      leading: Text("WordMemorizer",
-          textScaleFactor: 1.6,
-          style: const TextStyle(fontWeight: FontWeight.bold)),
-      title: Text(
-        "Played 10 times",
-        textScaleFactor: 1.3,
-        textAlign: TextAlign.right,
+      appBar: AppBar(
+        title: const Text(
+              "Games",
+              style: TextStyle(fontSize: 23),
+            ),
       ),
-      onTap: () {},
-    );
+      body: ListView(
+        children: 
+          [
+            ListTile(
+            leading: const Text("Definition Match",
+                textScaleFactor: 1.6,
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            // title: const Text(
+            //   winsCounter+" Wins",
+            //   textScaleFactor: 1.3,
+            //   textAlign: TextAlign.right,
+            // ),
+            onTap: () => {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const MatchGameView())),
+            }
+          ),
+        ],
+    ),
+      );
   }
+
+  DropdownButton _selectVaultDropdown() {
+    List<Vault> vault = (Provider.of<AppProvider>(context)..vaults) as List<Vault>;
+    Vault selected = Provider.of<AppProvider>(context).coreVault;
+
+    List<DropdownMenuItem> menuItemList = vault
+        .map((val) => DropdownMenuItem(value: val, child: Text(val.name)))
+        .toList();
+
+    return DropdownButton(
+      value: selected,
+      onChanged: (val) => setState(() => selected = val),
+      items: menuItemList,
+    );   
+  }
+
+  //vault selection
+  Future selectVault() => showDialog(
+    context: context, 
+    builder: (context) => AlertDialog(
+      title: const Text('Which Vault', textAlign: TextAlign.center, style: TextStyle(fontSize: 22)),
+      content: Container (
+        child: _selectVaultDropdown(),
+      ),
+    ),
+    
+  );
 
   // The AppBar widget in gameview
   AppBar SearchBar() {
