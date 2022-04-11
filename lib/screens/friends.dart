@@ -20,10 +20,9 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
   @override
   Widget build(BuildContext context) {
     friendsList = Provider.of<AppProvider>(context).currentFriends;
-
     return Scaffold(
       appBar: friendsBar(),
-      body: friendsListView(),
+      body: friendsList.isEmpty ? emptyFriendsList() : friendsListView(),
     );
   }
 
@@ -49,6 +48,10 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
             }),
       ],
     );
+  }
+
+  Widget emptyFriendsList() {
+    return const Center(child: Text("You currently have no friends :("));
   }
 
   ListView friendsListView() {
