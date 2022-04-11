@@ -28,8 +28,6 @@ class _FriendsAccountState extends State<FriendsAccount> {
           children: [
             buildTop(),
             buildBottom(),
-            //Add vaults
-            for (int i = 0; i < 3; i++) buildVault()
           ],
         ));
   }
@@ -81,15 +79,8 @@ class _FriendsAccountState extends State<FriendsAccount> {
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
                 color: Colors.green)),
+        const SizedBox(height: 20),
         const Divider(thickness: 2),
-        const Align(
-            //This is just for the shared vault title
-            alignment: Alignment.bottomLeft,
-            child: Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Text('Shared Vaults',
-                    style:
-                        TextStyle(fontSize: 30, fontWeight: FontWeight.bold)))),
       ],
     );
   }
