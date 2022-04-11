@@ -21,6 +21,7 @@ class _GameViewState extends State<GameView> {
 
   @override
   Widget build(BuildContext context) {
+    final app_provider = Provider.of<AppProvider>(context).coreVault;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -28,8 +29,26 @@ class _GameViewState extends State<GameView> {
               style: TextStyle(fontSize: 23),
             ),
       ),
-      body: GameViewContainer(),
-    );
+      body: ListView(
+        children: 
+          [
+            ListTile(
+            leading: const Text("Definition Match",
+                textScaleFactor: 1.6,
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            // title: const Text(
+            //   winsCounter+" Wins",
+            //   textScaleFactor: 1.3,
+            //   textAlign: TextAlign.right,
+            // ),
+            onTap: () => {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const MatchGameView())),
+            }
+          ),
+        ],
+    ),
+      );
   }
 
   DropdownButton _selectVaultDropdown() {
@@ -51,45 +70,13 @@ class _GameViewState extends State<GameView> {
   Future selectVault() => showDialog(
     context: context, 
     builder: (context) => AlertDialog(
-      title: Text('Which Vault', textAlign: TextAlign.center, style: TextStyle(fontSize: 22)),
+      title: const Text('Which Vault', textAlign: TextAlign.center, style: TextStyle(fontSize: 22)),
       content: Container (
         child: _selectVaultDropdown(),
       ),
     ),
     
   );
-
-  _enterGame () {
-    if (Provider.of<AppProvider>(context).coreVault.vaultitems.isNotEmpty){
-      MatchGameView(vault: Provider.of<AppProvider>(context, listen: false).coreVault, vaultIndex: -1);
-    }
-  }
-
-
-  // Overall body container in the gameview; game selector
-  Widget GameViewContainer() {
-    return Container(
-      child: _buildRow(),
-    );
-  }
-  Widget _buildRow() {
-    return ListBody(
-      children: 
-        [
-          ListTile(
-          leading: const Text("Definition Match",
-              textScaleFactor: 1.6,
-              style: TextStyle(fontWeight: FontWeight.bold)),
-          // title: const Text(
-          //   winsCounter+" Wins",
-          //   textScaleFactor: 1.3,
-          //   textAlign: TextAlign.right,
-          // ),
-          onTap: () => _enterGame(),
-        ),
-      ],
-    );
-  }
 
   // The AppBar widget in gameview
   AppBar SearchBar() {

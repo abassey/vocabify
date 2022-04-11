@@ -3,14 +3,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:vocabify/data/dictapi.dart';
+import 'package:provider/provider.dart';
+import '../providers/app_provider.dart';
 import '../data/vault.dart';
 import 'game.dart';
 
 
 class MatchGameView extends StatefulWidget {
-  const MatchGameView({Key? key, required this.vault, required this.vaultIndex}) : super(key: key);
-  final Vault vault;
-  final int vaultIndex;
+  const MatchGameView({Key? key}) : super(key: key);
 
   @override
   State<MatchGameView> createState() => _MatchGameViewState();
@@ -43,8 +43,8 @@ class _MatchGameViewState extends State<MatchGameView> {
     final random = Random();
     var validWord = false;
     var i = 0;
-
-    while (!validWord){
+    print(vaultItems.length);
+    while (!validWord) {
       if (!usedWords.contains(vaultItems[i])){
         i = random.nextInt(vaultItems.length);
         validWord = true;
@@ -55,10 +55,11 @@ class _MatchGameViewState extends State<MatchGameView> {
   }
 
   int getVaultItemCount() {
-    return widget.vault.vaultitems.length +
-            (widget.vault.vaultitems.length - 1 < 0
+    final app_provider = Provider.of<AppProvider>(context);
+    return app_provider.coreVault.vaultitems.length +
+            (app_provider.coreVault.vaultitems.length - 1 < 0
                 ? 0
-                : widget.vault.vaultitems.length - 1);
+                : app_provider.coreVault.vaultitems.length - 1);
   }
 
   //generate a list of other words from the vault besides the answer to populate other options
@@ -85,11 +86,12 @@ class _MatchGameViewState extends State<MatchGameView> {
   }
 
   Widget GameContainer() {
+    final app_provider = Provider.of<AppProvider>(context);
     final ButtonStyle style = ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
-    DictItem mainWord = getRandomWord(widget.vault.vaultitems);
-    List<String> wordOptions = getFalseOptions(mainWord.word, widget.vault.vaultitems);
+    DictItem mainWord = getRandomWord(app_provider.coreVault.vaultitems);
+    List<String> wordOptions = getFalseOptions(mainWord.word, app_provider.coreVault.vaultitems);
 
-    if (wordOptions.isEmpty){
+    if (app_provider.coreVault.vaultitems.isEmpty){
       return Container(
         child: const Text(
           "No words in vault.\n Look up some words and come back to try them out!",
@@ -99,7 +101,7 @@ class _MatchGameViewState extends State<MatchGameView> {
       );
     }
 
-    wordOptions.insert(Random().nextInt(wordOptions.length),mainWord.word);
+    wordOptions.add(mainWord.word);
     usedWords.add(mainWord.word);
 
     return Container(
