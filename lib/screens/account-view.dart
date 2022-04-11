@@ -51,10 +51,10 @@ class _AccountViewState extends State<AccountView> {
               style:
                   const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
         ),
-        const Padding(
-          padding: EdgeInsets.all(3.0),
-          child: Text('Words Learned: 11',
-              style: TextStyle(
+        Padding(
+          padding: const EdgeInsets.all(3.0),
+          child: Text('Words Learned: ${Provider.of<AppProvider>(context).wordsLearned}',
+              style: const TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                   color: Colors.green)),

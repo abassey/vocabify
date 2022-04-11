@@ -42,7 +42,14 @@ class _MatchGameViewState extends State<MatchGameView> {
   DictItem getRandomWord(List<DictItem> vaultItems) {
     final random = Random();
     var validWord = false;
-    return vaultItems[random.nextInt(vaultItems.length)];
+    var retry = 0;
+    DictItem word = vaultItems[random.nextInt(vaultItems.length)];
+    while( usedWords.contains(word.word) && retry < 10) {
+      word = vaultItems[random.nextInt(vaultItems.length)];
+      retry++;
+    }
+    usedWords.add(word.word);
+    return word;
   }
 
   int getVaultItemCount() {
@@ -57,13 +64,13 @@ class _MatchGameViewState extends State<MatchGameView> {
   List<String> getFalseOptions(answer, vaultItems){
     List<String> options = [];
     String temp;
-    if (getVaultItemCount() < 5 && getVaultItemCount() != 0) {
+    if (getVaultItemCount() < 10 && getVaultItemCount() != 0) {
       while (options.length < getVaultItemCount()) {
         temp = getRandomWord(vaultItems).word;
         options.add(temp);
       }
     } else {
-      while (options.length < 5) {
+      while (options.length < 10) {
         temp = getRandomWord(vaultItems).word;
         options.add(temp);
       }
@@ -75,10 +82,10 @@ class _MatchGameViewState extends State<MatchGameView> {
   Widget GameContainer() {
     final app_provider = Provider.of<AppProvider>(context);
 
-    if (app_provider.coreVault.vaultitems.isEmpty){
+    if (app_provider.coreVault.vaultitems.isEmpty || app_provider.coreVault.vaultitems.length < 10){
       return Container(
         child: const Text(
-          "No words in vault.\n Look up some words and come back to try them out!",
+          "No words in vault.\n Look up some words and come back to try them out! You need at least 10 words!",
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 32),
         ),
