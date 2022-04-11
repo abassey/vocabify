@@ -22,16 +22,19 @@ class _GameViewState extends State<GameView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SearchBar(),
+      appBar: AppBar(
+        title: const Text(
+              "Games",
+              style: TextStyle(fontSize: 23),
+            ),
+      ),
       body: GameViewContainer(),
-      //there is only one game right now
-      //body: MatchGameView(vault: Provider.of<AppProvider>(context).coreVault, vaultIndex: -1),
     );
   }
 
   DropdownButton _selectVaultDropdown() {
     List<Vault> vault = (Provider.of<AppProvider>(context)..vaults) as List<Vault>;
-    String selected = Provider.of<AppProvider>(context).coreVault.name;
+    Vault selected = Provider.of<AppProvider>(context).coreVault;
 
     List<DropdownMenuItem> menuItemList = vault
         .map((val) => DropdownMenuItem(value: val, child: Text(val.name)))
@@ -44,6 +47,7 @@ class _GameViewState extends State<GameView> {
     );   
   }
 
+  //vault selection
   Future selectVault() => showDialog(
     context: context, 
     builder: (context) => AlertDialog(
@@ -55,6 +59,12 @@ class _GameViewState extends State<GameView> {
     
   );
 
+  _enterGame () {
+    if (Provider.of<AppProvider>(context).coreVault.vaultitems.isNotEmpty){
+      MatchGameView(vault: Provider.of<AppProvider>(context, listen: false).coreVault, vaultIndex: -1);
+    }
+  }
+
 
   // Overall body container in the gameview; game selector
   Widget GameViewContainer() {
@@ -62,18 +72,22 @@ class _GameViewState extends State<GameView> {
       child: _buildRow(),
     );
   }
-
   Widget _buildRow() {
-    return ListTile(
-      leading: const Text("Definition Match",
-          textScaleFactor: 1.6,
-          style: TextStyle(fontWeight: FontWeight.bold)),
-      // title: const Text(
-      //   "Played 10 times",
-      //   textScaleFactor: 1.3,
-      //   textAlign: TextAlign.right,
-      // ),
-      onTap: () => MatchGameView(vault: Provider.of<AppProvider>(context).coreVault, vaultIndex: -1),
+    return ListBody(
+      children: 
+        [
+          ListTile(
+          leading: const Text("Definition Match",
+              textScaleFactor: 1.6,
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          // title: const Text(
+          //   winsCounter+" Wins",
+          //   textScaleFactor: 1.3,
+          //   textAlign: TextAlign.right,
+          // ),
+          onTap: () => _enterGame(),
+        ),
+      ],
     );
   }
 
