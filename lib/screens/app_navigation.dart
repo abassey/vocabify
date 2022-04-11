@@ -7,7 +7,6 @@ import 'home-screen.dart';
 import '../providers/app_provider.dart';
 import 'package:provider/provider.dart';
 
-
 class AppNavigation extends StatefulWidget {
   const AppNavigation({Key? key}) : super(key: key);
 
@@ -28,7 +27,7 @@ class _AppNavigationState extends State<AppNavigation> {
   ];
 
   @override
-  Widget build(BuildContext context) {  
+  Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
         index: currentIndex,
@@ -38,7 +37,7 @@ class _AppNavigationState extends State<AppNavigation> {
         currentIndex: currentIndex,
         onTap: (index) => setState(() => currentIndex = index),
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.deepPurple[300],
         selectedItemColor: Colors.white,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
