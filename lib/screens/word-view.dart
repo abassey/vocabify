@@ -222,11 +222,13 @@ class _WordViewState extends State<WordView> {
                               children: [
                                 widget.word.synonyms.isEmpty
                                     ? const Text(" ")
-                                    : const Text("Synonyms:",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontStyle: FontStyle.italic,
-                                            fontWeight: FontWeight.w500)),
+                                    : const Center(
+                                      child: Text("Synonyms:",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontStyle: FontStyle.italic,
+                                              fontWeight: FontWeight.w500)),
+                                    ),
                                 const Padding(padding: EdgeInsets.all(4)),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -249,13 +251,15 @@ class _WordViewState extends State<WordView> {
                                                             isPeek: false,
                                                           )));
                                             },
-                                            child: Card(
-                                                color: Colors.grey,
-                                                child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            10),
-                                                    child: Text(syn))),
+                                            child: Center(
+                                              child: Card(
+                                                  color: Colors.grey,
+                                                  child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10),
+                                                      child: Text(syn))),
+                                            ),
                                           ))
                                   ],
                                 ),
