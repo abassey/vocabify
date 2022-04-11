@@ -6,7 +6,9 @@ import 'game.dart';
 import 'match_game.dart';
 
 class GameView extends StatefulWidget {
-  const GameView({Key? key,}) : super(key: key);
+  const GameView({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _GameViewState createState() => _GameViewState();
@@ -18,23 +20,24 @@ class _GameViewState extends State<GameView> {
   List<Game> games = [];
 
   @override
-  Widget build(BuildContext context) { 
+  Widget build(BuildContext context) {
     return Scaffold(
       // appBar: SearchBar(),
       // body: GameViewContainer(),
       //there is only one game right now
-      body: MatchGameView(vault: Provider.of<AppProvider>(context).vaults.first, vaultIndex: -1),
+      body: MatchGameView(
+          vault: Provider.of<AppProvider>(context).vaults.first,
+          vaultIndex: -1),
     );
   }
 
   //skeleton concept for a vault selection; make future?
-  MatchGameView _selectVault(context){
+  MatchGameView _selectVault(context) {
     List<Vault> vault = context.vaults;
     var input = 0;
     //user selection
     return MatchGameView(vault: vault[input], vaultIndex: -1);
   }
-
 
   // Overall body container in the gameview; game selector
   Widget GameViewContainer() {
@@ -42,6 +45,7 @@ class _GameViewState extends State<GameView> {
       child: _buildRow(),
     );
   }
+
   Widget _buildRow() {
     return ListTile(
       leading: Text("WordMemorizer",
@@ -55,6 +59,7 @@ class _GameViewState extends State<GameView> {
       onTap: () {},
     );
   }
+
   // The AppBar widget in gameview
   AppBar SearchBar() {
     return AppBar(
@@ -73,16 +78,16 @@ class _GameViewState extends State<GameView> {
         Padding(
             padding: const EdgeInsets.all(10),
             child: IconButton(
-                onPressed: () =>{
-                  setState(() {
-                    _isEditMode = !_isEditMode;
-                    if (_isEditMode) {
-                      iconSize = 15;
-                    } else {
-                      iconSize = 20;
-                    }
-                  }),
-                },
+                onPressed: () => {
+                      setState(() {
+                        _isEditMode = !_isEditMode;
+                        if (_isEditMode) {
+                          iconSize = 15;
+                        } else {
+                          iconSize = 20;
+                        }
+                      }),
+                    },
                 icon: !_isEditMode
                     ? const Icon(Icons.search)
                     : const Icon(Icons.close))),
