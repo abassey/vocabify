@@ -27,7 +27,7 @@ class _VaultViewState extends State<VaultView> {
   Widget _buildRow(index) {
     return ListTile(
       title: Text(
-        widget.vault.vaultitems[index].word.toTitleCase(),
+        widget.vault.vaultitems[index].word,
         style: const TextStyle(fontSize: 20),
       ),
       trailing: const Icon(Icons.arrow_forward_ios),
